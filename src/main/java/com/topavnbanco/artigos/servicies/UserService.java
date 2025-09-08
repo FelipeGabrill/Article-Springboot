@@ -1,12 +1,11 @@
 package com.topavnbanco.artigos.servicies;
 
 import java.util.List;
-import java.util.Set;
 
 import com.topavnbanco.artigos.dto.ArticleDTO;
 import com.topavnbanco.artigos.dto.RoleDTO;
+import com.topavnbanco.artigos.dto.user.UserArticlesDTO;
 import com.topavnbanco.artigos.dto.user.UserDTO;
-import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.Role;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.dto.user.UserInsertDTO;
@@ -55,6 +54,19 @@ public class UserService implements UserDetailsService {
     public UserDTO findById(Long id) {
         User user = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
         return new UserDTO(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserArticlesDTO findUserWithArticles(Long id) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+
+        ;;;
+        List<ArticleDTO> articles = user.getUserArticles().stream()
+                .map(ArticleDTO::new)
+                .toList();
+
+        return new UserArticlesDTO(user.getId(), user.getLogin(), articles);
     }
 
     @Transactional(readOnly = true)
@@ -111,18 +123,6 @@ public class UserService implements UserDetailsService {
 //        if (dto.getProfileImageBase64() != null && !dto.getProfileImageBase64().isBlank()) {
 //            entity.setProfileImage(Base64.getDecoder().decode(dto.getProfileImageBase64()));
 //        }
-
-        Set<Long> articleIds = dto.getUserArticlesDTO();
-        if (articleIds != null && !articleIds.isEmpty()) {
-            for (Long articleId : articleIds) {
-                boolean exists = entity.getUserArticles() != null &&
-                        entity.getUserArticles().stream().anyMatch(a -> a.getId().equals(articleId));
-                if (!exists) {
-                    Article ref = articleRepository.getReferenceById(articleId); // evita entidade transitória
-                    entity.getUserArticles().add(ref);
-                }
-            }
-        }
 
         for (RoleDTO roleDto : dto.getRolesDTO()) {
             boolean exists = entity.getRoles().stream().anyMatch(role -> role.getId().equals(roleDto.getId()));

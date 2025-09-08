@@ -4,6 +4,7 @@ import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.projections.UserDetailsProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 				WHERE tb_user.login = :login
 			""")
     List<UserDetailsProjection> searchUserAndRolesByLogin(String login);
+
+    @EntityGraph(attributePaths = "userArticles")
+    Optional<User> findById(Long id);
 
     Optional<User> findByLogin(String login);
 

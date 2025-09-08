@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.controllers;
 
 import java.net.URI;
 
+import com.topavnbanco.artigos.dto.user.UserArticlesDTO;
 import com.topavnbanco.artigos.dto.user.UserDTO;
 import com.topavnbanco.artigos.dto.user.UserInsertDTO;
 import com.topavnbanco.artigos.dto.user.UserUpdateDTO;
@@ -37,7 +38,7 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getMe() {
         UserDTO dto = service.getMe();
@@ -52,10 +53,25 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         UserDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "Get User with Articles by ID",
+            description = "Retrieve a user by their unique identifier",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "404", description = "Not Found")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/articles/{id}")
+    public ResponseEntity<UserArticlesDTO> findUserWithArticles(@PathVariable Long id) {
+        UserArticlesDTO dto = service.findUserWithArticles(id);
         return ResponseEntity.ok(dto);
     }
 
@@ -66,7 +82,7 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_TEACHER', 'ROLE_MANAGER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserDTO>> findByAll(Pageable pageable) {
         Page<UserDTO> dto = service.findAll(pageable);

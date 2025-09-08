@@ -63,9 +63,6 @@ public class UserDTO {
     @Schema(description = "Perfis (roles) atribuídos ao usuário")
     private Set<RoleDTO> rolesDTO = new HashSet<>();
 
-    @Schema(description = "Artigos vinculados ao usuário")
-    private Set<Long> userArticlesDTO = new HashSet<>();
-
     public UserDTO(User entity) {
         this.id = entity.getId();
         this.usernameUser = entity.getUsernameUser();
@@ -81,11 +78,6 @@ public class UserDTO {
 
         if (entity.getRoles() != null) {
             entity.getRoles().forEach(r -> this.rolesDTO.add(new RoleDTO(r)));
-        }
-        if (entity.getUserArticles() != null) {
-            for (Article a : entity.getUserArticles()) {
-                this.userArticlesDTO.add(a.getId());
-            }
         }
     }
 }
