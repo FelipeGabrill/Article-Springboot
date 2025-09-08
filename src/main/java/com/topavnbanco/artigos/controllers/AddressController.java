@@ -1,0 +1,121 @@
+package com.topavnbanco.artigos.controllers;
+
+
+import java.net.URI;
+
+import com.topavnbanco.artigos.dto.AddressDTO;
+import com.topavnbanco.artigos.servicies.AddressService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+
+import jakarta.validation.Valid;
+
+@Tag(name = "Address", description = "Endpoints for managing addresss")
+@RestController
+@RequestMapping(value = "/addresses", produces = "application/json")
+@SecurityRequirement(name = "bearerAuth")
+public class AddressController {
+
+    @Autowired
+    private AddressService service;
+
+    @Operation(
+            summary = "Get Address by ID",
+            description = "Retrieve a address by its unique identifier",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "404", description = "Not Found")
+            }
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<AddressDTO> findById(@PathVariable Long id) {
+        AddressDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "List all Addresss",
+            description = "Retrieve all addresss with optional filters and pagination",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK")
+            }
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping
+    public ResponseEntity<Page<AddressDTO>> findByAll(Pageable pageable) {
+        Page<AddressDTO> dto = service.findAll(pageable);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "Create a new Address",
+            description = "Register a new address in the system",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Created"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
+            }
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping
+    public ResponseEntity<AddressDTO> insert(@Valid @RequestBody AddressDTO dto) {
+        dto = service.insert(dto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(dto.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(dto);
+    }
+
+    @Operation(
+            summary = "Update a Address",
+            description = "Update the details of an existing address",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not Found"),
+                    @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
+            }
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<AddressDTO> update(@PathVariable Long id, @Valid @RequestBody AddressDTO dto) {
+        dto = service.update(id, dto);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "Delete a Address",
+            description = "Delete a address by its unique identifier",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Success"),
+                    @ApiResponse(responseCode = "400", description = "Bad Request"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "404", description = "Not Found"),
+                    @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
+            }
+    )
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+}
