@@ -1,6 +1,9 @@
 package com.topavnbanco.artigos.dto;
 
+import com.topavnbanco.artigos.dto.user.UserDTO;
+import com.topavnbanco.artigos.dto.user.UserSimpleDTO;
 import com.topavnbanco.artigos.entities.Review;
+import com.topavnbanco.artigos.entities.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -32,6 +35,8 @@ public class ReviewDTO {
     @NotNull(message = "A avaliação associada é obrigatória.")
     private Long evaluationId;
 
+    @Schema(description = "Identificador do revisor", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    private UserSimpleDTO UserDTO;
 
     public ReviewDTO(Review entity) {
         this.id = entity.getId();
@@ -39,5 +44,6 @@ public class ReviewDTO {
         this.score = entity.getScore();
         this.articleId= entity.getArticle().getId();
         this.evaluationId = entity.getEvaluation().getId();
+        this.UserDTO = new UserSimpleDTO(entity.getReviewer());
     }
 }

@@ -24,12 +24,12 @@ public class UserDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Nome de exibição do usuário", example = "Alex pedro")
+    @Schema(description = "Nome de exibição do usuário", example = "test test")
     @NotBlank(message = "O nome do usuário é obrigatório.")
     @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres.")
     private String usernameUser;
 
-    @Schema(description = "Login único para autenticação", example = "Alexpedro@gmail.com")
+    @Schema(description = "Login único para autenticação", example = "test@gmail.com")
     @NotBlank(message = "O login é obrigatório.")
     @Email(message = "O login deve ser um e-mail válido.")
     @Size(max = 255, message = "O login deve ter no máximo 255 caracteres.")

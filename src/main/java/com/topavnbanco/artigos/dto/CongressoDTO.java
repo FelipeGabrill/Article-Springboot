@@ -43,9 +43,6 @@ public class CongressoDTO {
     @NotNull(message = "A data limite de revisão é obrigatória.")
     private Date reviewDeadline;
 
-    @Schema(description = "Quantidade de revisões por artigo", example = "5")
-    private Integer reviewsPerArticle;
-
     @Schema(description = "IDs dos usuários associados ao congresso", example = "[12, 34, 56]")
     private List<Long> usersIds= new ArrayList<>();
 
@@ -58,7 +55,6 @@ public class CongressoDTO {
         this.place = entity.getPlace();
         this.submissionDeadline = entity.getSubmissionDeadline();
         this.reviewDeadline = entity.getReviewDeadline();
-        this.reviewsPerArticle = entity.getReviewsPerArticle();
 
         for(User user : entity.getUser()) {
             UserDTO dto = new UserDTO(user);

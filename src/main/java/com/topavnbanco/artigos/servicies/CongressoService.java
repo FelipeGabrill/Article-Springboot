@@ -5,6 +5,7 @@ import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
+import com.topavnbanco.artigos.schedulers.CongressoScheduler;
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.servicies.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Date;
+
 @Service
 public class CongressoService {
 
@@ -24,6 +28,9 @@ public class CongressoService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CongressoScheduler congressoScheduler;
 
     @Transactional(readOnly = true)
     public CongressoDTO findById(Long id) {
@@ -42,7 +49,9 @@ public class CongressoService {
     public CongressoDTO insert(CongressoDTO dto) {
         Congresso entity = new Congresso();
         copyDtoToEntity(dto, entity);
+        entity.setSubmissionDeadline(Date.from(Instant.now().plusSeconds(100)));
         entity = repository.save(entity);
+        congressoScheduler.scheduleOnSubmissionDeadline(entity);
         return new CongressoDTO(entity);
     }
 
@@ -77,7 +86,6 @@ public class CongressoService {
         entity.setStartDate(dto.getStartDate());
         entity.setEndDate(dto.getEndDate());
         entity.setReviewDeadline(dto.getReviewDeadline());
-        entity.setReviewsPerArticle(dto.getReviewsPerArticle());
 
         if (dto.getUsersIds() != null) {
             for (Long userId : dto.getUsersIds()) {

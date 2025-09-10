@@ -1,6 +1,7 @@
 package com.topavnbanco.artigos.entities;
 
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
+import com.topavnbanco.artigos.entities.enuns.ReviewStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -28,7 +29,7 @@ public class Article {
 
     private String description;
 
-    private Boolean isValid;
+    private ReviewStatus status;
 
     @Lob
     private String body;

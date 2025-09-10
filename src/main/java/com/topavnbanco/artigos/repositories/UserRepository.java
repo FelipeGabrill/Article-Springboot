@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,8 +28,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = "userArticles")
     Optional<User> findById(Long id);
 
-    List<User> findByIsReviewerTrue();
-
+    @Query(value = """
+        SELECT u.* 
+        FROM tb_user u
+        WHERE u.is_reviewer = TRUE
+          AND u.id NOT IN (:authorIds)              
+          AND NOT EXISTS (                         
+                SELECT 1 FROM tb_review r 
+                WHERE r.article_id = :articleId 
+                  AND r.reviewer_id = u.id
+          )
+        ORDER BY RAND()
+        LIMIT :limit
+        """, nativeQuery = true)
+    List<User> pickRandomEligible(
+            @Param("articleId") Long articleId,
+            @Param("authorIds") List<Long> authorIds,
+            @Param("limit") int limit
+    );
     Optional<User> findByLogin(String login);
 
     boolean existsByLogin(String login);

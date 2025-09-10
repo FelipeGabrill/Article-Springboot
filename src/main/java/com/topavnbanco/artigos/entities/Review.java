@@ -27,6 +27,10 @@ public class Review {
     @JoinColumn(name = "article_id")
     private Article article;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewer_id", nullable = false)
+    private User reviewer;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "evaluation_id", unique = true)
     private Evaluation evaluation;

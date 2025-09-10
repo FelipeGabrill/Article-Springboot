@@ -5,6 +5,8 @@ import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.Review;
 import com.topavnbanco.artigos.entities.User;
+import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
+import com.topavnbanco.artigos.entities.enuns.ReviewStatus;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.ReviewRepository;
@@ -56,8 +58,9 @@ public class ArticleService {
     public ArticleDTO insert(ArticleDTO dto) {
         Article entity = new Article();
         copyDtoToEntity(dto, entity);
+        entity.setFormat(ArticleFormat.PDF);
         entity.setPublishedAt(Instant.now());
-        entity.setIsValid(false);
+        entity.setStatus(ReviewStatus.PENDING);
         entity = repository.save(entity);
         return new ArticleDTO(entity);
     }

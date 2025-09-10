@@ -35,8 +35,6 @@ public class Congresso {
 
     private Date reviewDeadline;
 
-    private Integer reviewsPerArticle;
-
     @OneToMany(mappedBy = "congresso")
     private List<User> user = new ArrayList<>();
 
