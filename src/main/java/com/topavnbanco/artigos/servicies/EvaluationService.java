@@ -73,7 +73,7 @@ public class EvaluationService {
 
     private void copyDtoToEntity(EvaluationDTO dto, Evaluation entity) {
 
-        Review review = reviewRepository.getReferenceById(dto.getReviewId());
+        Review review = reviewRepository.findById(dto.getReviewId()).orElseThrow(() -> new ResourceNotFoundException("Review não encontrado"));
 
         entity.setFinalScore(dto.getFinalScore());
         entity.setNumberOfReviews(dto.getNumberOfReviews());

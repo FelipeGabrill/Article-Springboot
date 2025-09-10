@@ -1,7 +1,6 @@
 package com.topavnbanco.artigos.servicies;
 
 import com.topavnbanco.artigos.dto.CongressoDTO;
-import com.topavnbanco.artigos.dto.user.UserDTO;
 import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.repositories.CongressoRepository;

@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.topavnbanco.artigos.entities.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AddressDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(description = "Identificador único do endereço", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
@@ -51,10 +53,6 @@ public class AddressDTO {
     @Size(min = 2, max = 60, message = "O país deve ter entre 2 e 60 caracteres.")
     private String country;
 
-    @Schema(description = "Identificador do usuário associado ao endereço", example = "1")
-    @NotNull(message = "O usuário associado ao endereço é obrigatório.")
-    private Long userId;
-
     public AddressDTO(Address entity) {
         this.id = entity.getId();
         this.street = entity.getStreet();
@@ -64,6 +62,5 @@ public class AddressDTO {
         this.state = entity.getState();
         this.zipCode = entity.getZipCode();
         this.country = entity.getCountry();
-        this.userId = entity.getUser().getId();
     }
 }

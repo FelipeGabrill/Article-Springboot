@@ -2,10 +2,7 @@ package com.topavnbanco.artigos.controllers;
 
 import java.net.URI;
 
-import com.topavnbanco.artigos.dto.user.UserArticlesDTO;
-import com.topavnbanco.artigos.dto.user.UserDTO;
-import com.topavnbanco.artigos.dto.user.UserInsertDTO;
-import com.topavnbanco.artigos.dto.user.UserUpdateDTO;
+import com.topavnbanco.artigos.dto.user.*;
 import com.topavnbanco.artigos.servicies.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,8 +81,8 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> findByAll(Pageable pageable) {
-        Page<UserDTO> dto = service.findAll(pageable);
+    public ResponseEntity<Page<UserSimpleDTO>> findByAll(Pageable pageable) {
+        Page<UserSimpleDTO> dto = service.findAll(pageable);
         return ResponseEntity.ok(dto);
     }
 
@@ -123,8 +120,8 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
-        UserDTO newDto = service.update(id, dto);
+    public ResponseEntity<UserSimpleDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
+        UserSimpleDTO newDto = service.update(id, dto);
         return ResponseEntity.ok(newDto);
     }
 

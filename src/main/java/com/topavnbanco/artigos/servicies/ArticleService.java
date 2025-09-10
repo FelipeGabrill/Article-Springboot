@@ -1,12 +1,12 @@
 package com.topavnbanco.artigos.servicies;
 
 import com.topavnbanco.artigos.dto.ArticleDTO;
-import com.topavnbanco.artigos.dto.ReviewDTO;
-import com.topavnbanco.artigos.dto.user.UserDTO;
 import com.topavnbanco.artigos.entities.Article;
+import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.Review;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
+import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.ReviewRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
@@ -36,6 +36,9 @@ public class ArticleService {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired
+    private CongressoRepository congressoRepository;
+
     @Transactional(readOnly = true)
     public ArticleDTO findById(Long id) {
         Article article = repository.findById(id).orElseThrow(
@@ -54,6 +57,7 @@ public class ArticleService {
         Article entity = new Article();
         copyDtoToEntity(dto, entity);
         entity.setPublishedAt(Instant.now());
+        entity.setIsValid(false);
         entity = repository.save(entity);
         return new ArticleDTO(entity);
     }
@@ -84,9 +88,13 @@ public class ArticleService {
     }
 
     private void copyDtoToEntity(ArticleDTO dto, Article entity) {
-        entity.setDesciption(dto.getDesciption());
+
+        Congresso congresso = congressoRepository.findById(dto.getCongressoId()).orElseThrow(() -> new ResourceNotFoundException("Congresso não encontrado"));
+
+        entity.setDescription(dto.getDescription());
         entity.setFormat(dto.getFormat());
         entity.setBody(dto.getBody());
+        entity.setCongresso((congresso));
 
         Set<Long> userIds = dto.getArticlesUsersIds();
         if (userIds != null && !userIds.isEmpty()) {

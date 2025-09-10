@@ -32,9 +32,6 @@ public class Card {
 
     private Integer cvv;
 
-    @OneToOne(mappedBy = "card", fetch = FetchType.LAZY)
-    private User user;
-
     public Card() {
     }
 }

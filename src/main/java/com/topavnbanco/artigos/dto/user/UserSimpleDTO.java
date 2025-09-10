@@ -1,9 +1,7 @@
 package com.topavnbanco.artigos.dto.user;
 
-import com.topavnbanco.artigos.dto.AddressDTO;
-import com.topavnbanco.artigos.dto.CardDTO;
 import com.topavnbanco.artigos.dto.RoleDTO;
-import com.topavnbanco.artigos.entities.*;
+import com.topavnbanco.artigos.entities.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,8 +16,7 @@ import java.util.UUID;
 
 @NoArgsConstructor
 @Getter
-public class UserDTO {
-
+public class UserSimpleDTO {
     @Schema(description = "Identificador único do usuário", example = "100", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
@@ -45,10 +42,10 @@ public class UserDTO {
     private Boolean isReviewer;
 
     @Schema(description = "Identificador do endereço associado ao usuário", example = "1")
-    private AddressDTO addressDTO;
+    private Long addressId;
 
     @Schema(description = "Identificador do cartão associado ao usuário", example = "1")
-    private CardDTO cardDTO;
+    private Long cardId;
 
     @Schema(description = "Imagem de perfil do usuário em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
     private byte[] profileImage;
@@ -59,15 +56,15 @@ public class UserDTO {
     @Schema(description = "Perfis (roles) atribuídos ao usuário")
     private Set<RoleDTO> roles = new HashSet<>();
 
-    public UserDTO(User entity) {
+    public UserSimpleDTO(User entity) {
         this.id = entity.getId();
         this.usernameUser = entity.getUsernameUser();
         this.login = entity.getUsername();
         this.workPlace = entity.getWorkPlace();
         this.membershipNumber = entity.getMembershipNumber();
         this.isReviewer = entity.getIsReviewer();
-        this.addressDTO = new AddressDTO(entity.getAddress());
-        this.cardDTO = new CardDTO(entity.getCard());
+        this.addressId = entity.getAddress().getId();
+        this.cardId = entity.getCard().getId();
         this.congressoId = entity.getCongresso().getId();
         this.profileImage = entity.getProfileImage();
 

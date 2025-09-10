@@ -34,9 +34,6 @@ public class Address {
 
     private String country;
 
-    @OneToOne(mappedBy = "address", fetch = FetchType.LAZY)
-    private User user;
-
     public Address() {
     }
 }

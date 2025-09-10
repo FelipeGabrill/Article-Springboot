@@ -1,6 +1,7 @@
 package com.topavnbanco.artigos.dto;
 
 import com.topavnbanco.artigos.entities.Article;
+import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.Review;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
@@ -27,7 +28,7 @@ public class ArticleDTO {
     @Schema(description = "Descrição resumida do artigo", example = "Artigo sobre inteligência artificial")
     @NotBlank(message = "A descrição não pode estar em branco.")
     @Size(min = 5, max = 200, message = "A descrição deve ter entre 5 e 200 caracteres.")
-    private String desciption;
+    private String description;
 
     @Schema(description = "Conteúdo completo do artigo", example = "Este artigo aborda os impactos da IA na saúde...")
     @NotBlank(message = "O corpo do artigo não pode estar em branco.")
@@ -38,8 +39,14 @@ public class ArticleDTO {
     @NotNull(message = "O formato do artigo é obrigatório.")
     private ArticleFormat format;
 
+    @Schema(description = "Artigos validos (ja revisados)", example = "false", accessMode = Schema.AccessMode.READ_ONLY)
+    private boolean isValid;
+
     @Schema(description = "Data de publicação do artigo", example = "2025-09-08T12:00:00Z", accessMode = Schema.AccessMode.READ_ONLY)
     private Instant publishedAt;
+
+    @Schema(description = "Id do congresso", example = "1")
+    private Long congressoId;
 
     @Schema(description = "Lista de usuários associados ao artigo")
     private Set<Long> articlesUsersIds= new HashSet<>();
@@ -49,10 +56,12 @@ public class ArticleDTO {
 
     public ArticleDTO(Article entity) {
         this.id = entity.getId();
-        this.desciption = entity.getDesciption();
+        this.description = entity.getDescription();
+        this.isValid = entity.getIsValid();
         this.body = entity.getBody();
         this.format = entity.getFormat();
         this.publishedAt = entity.getPublishedAt();
+        this.congressoId = entity.getCongresso().getId();
 
         if (entity.getArticlesUsers() != null) {
             for (User user : entity.getArticlesUsers()) {

@@ -26,7 +26,9 @@ public class Article {
     @EqualsAndHashCode.Include
     private Long id;
 
-    private String desciption;
+    private String description;
+
+    private Boolean isValid;
 
     @Lob
     private String body;
@@ -34,6 +36,10 @@ public class Article {
     private ArticleFormat format;
 
     private Instant publishedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "congresso_id")
+    private Congresso congresso;
 
     @ManyToMany
     @JoinTable(name = "tb_articles_users",

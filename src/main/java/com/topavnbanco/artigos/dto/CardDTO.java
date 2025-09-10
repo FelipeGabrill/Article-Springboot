@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.topavnbanco.artigos.entities.Card;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Getter
 public class CardDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(description = "Identificador único do cartão", example = "5", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
@@ -31,15 +33,10 @@ public class CardDTO {
     @Max(value = 999, message = "O CVV deve ter no máximo 3 dígitos.")
     private Integer cvv;
 
-    @Schema(description = "Identificador do usuário associado ao cartão", example = "42")
-    @NotNull(message = "O usuário associado ao cartão é obrigatório.")
-    private Long userId;
-
     public CardDTO(Card entity) {
         this.id = entity.getId();
         this.number = entity.getNumber();
         this.expired = entity.getExpired();
         this.cvv = entity.getCvv();
-        this.userId = entity.getUser().getId();
     }
 }
