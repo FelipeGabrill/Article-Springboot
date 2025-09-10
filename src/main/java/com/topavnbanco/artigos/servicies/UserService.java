@@ -91,7 +91,7 @@ public class UserService implements UserDetailsService {
         copyDtoToEntityInsert(dto, entity);
         entity = repository.save(entity);
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-        sendWelcomeEmail(entity.getLogin(), entity.getUsernameUser(), entity.getRoles());
+//        sendWelcomeEmail(entity.getLogin(), entity.getUsernameUser(), entity.getRoles());
         return new UserDTO(entity);
     }
 

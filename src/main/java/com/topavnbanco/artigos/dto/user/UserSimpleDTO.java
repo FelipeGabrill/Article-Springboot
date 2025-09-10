@@ -3,10 +3,7 @@ package com.topavnbanco.artigos.dto.user;
 import com.topavnbanco.artigos.dto.RoleDTO;
 import com.topavnbanco.artigos.entities.User;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -48,11 +45,14 @@ public class UserSimpleDTO {
     private Long cardId;
 
     @Schema(description = "Imagem de perfil do usuário em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
+    @NotBlank(message = "A imagem de perfil é obrigatória.")
     private byte[] profileImage;
 
     @Schema(description = "Identificador do congresso associado ao usuário", example = "1")
+    @NotNull(message = "O congresso é obrigatório.")
     private Long congressoId;
 
+    @NotEmpty(message = "Informe ao menos uma role.")
     @Schema(description = "Perfis (roles) atribuídos ao usuário")
     private Set<RoleDTO> roles = new HashSet<>();
 
