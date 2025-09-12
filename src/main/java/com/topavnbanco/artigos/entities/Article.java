@@ -27,6 +27,8 @@ public class Article {
     @EqualsAndHashCode.Include
     private Long id;
 
+    private String title;
+
     private String description;
 
     private ReviewStatus status;

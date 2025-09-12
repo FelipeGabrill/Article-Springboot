@@ -36,6 +36,11 @@ public class ArticleDTO {
     @Size(min = 20, message = "O corpo do artigo deve ter no mínimo 20 caracteres.")
     private String body;
 
+    @Schema(description = "Título do artigo", example = "Impactos da IA na saúde")
+    @NotBlank(message = "O título do artigo não pode estar em branco.")
+    @Size(max = 50, message = "O título do artigo deve ter no máximo 50 caracteres.")
+    private String title;
+
     @Schema(description = "Formato do artigo", example = "PDF", accessMode = Schema.AccessMode.READ_ONLY)
     private ArticleFormat format;
 
@@ -62,6 +67,7 @@ public class ArticleDTO {
         this.format = entity.getFormat();
         this.publishedAt = entity.getPublishedAt();
         this.congressoId = entity.getCongresso().getId();
+        this.title = entity.getTitle();
 
         if (entity.getArticlesUsers() != null) {
             for (User user : entity.getArticlesUsers()) {

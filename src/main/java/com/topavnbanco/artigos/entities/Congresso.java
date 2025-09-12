@@ -23,6 +23,8 @@ public class Congresso {
     @EqualsAndHashCode.Include
     private Long id;
 
+    private byte[] imageThumbnail;
+
     private String name;
 
     private Date startDate;
@@ -34,6 +36,10 @@ public class Congresso {
     private Date submissionDeadline;
 
     private Date reviewDeadline;
+
+    private Integer maxReviewsPerArticle;
+
+    private Integer minReviewsPerArticle;
 
     @OneToMany(mappedBy = "congresso")
     private List<User> user = new ArrayList<>();

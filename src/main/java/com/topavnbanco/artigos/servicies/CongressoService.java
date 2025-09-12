@@ -7,6 +7,7 @@ import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
 import com.topavnbanco.artigos.schedulers.CongressoScheduler;
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
+import com.topavnbanco.artigos.servicies.exceptions.InvalidReviewRangeException;
 import com.topavnbanco.artigos.servicies.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,8 @@ public class CongressoService {
     public CongressoDTO insert(CongressoDTO dto) {
         Congresso entity = new Congresso();
         copyDtoToEntity(dto, entity);
+        validReviewsPerArticle(dto.getMinReviewsPerArticle(), dto.getMaxReviewsPerArticle());
+        //apenas permace assim por conta dos testes
         entity.setSubmissionDeadline(Date.from(Instant.now().plusSeconds(100)));
         entity = repository.save(entity);
         congressoScheduler.scheduleOnSubmissionDeadline(entity);
@@ -59,6 +62,7 @@ public class CongressoService {
     public CongressoDTO update(Long id, CongressoDTO dto) {
         try {
             Congresso entity = repository.getReferenceById(id);
+            validReviewsPerArticle(dto.getMinReviewsPerArticle(), dto.getMaxReviewsPerArticle());
             copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
             return new CongressoDTO(entity);
@@ -80,12 +84,21 @@ public class CongressoService {
         }
     }
 
+    private void validReviewsPerArticle(Integer min, Integer max) {
+        if (max < min) {
+            throw new InvalidReviewRangeException("O número mínimo de revisões não pode ser maior que o máximo.");
+        }
+    }
+
     private void copyDtoToEntity(CongressoDTO dto, Congresso entity) {
         entity.setName(dto.getName());
         entity.setPlace(dto.getPlace());
         entity.setStartDate(dto.getStartDate());
         entity.setEndDate(dto.getEndDate());
         entity.setReviewDeadline(dto.getReviewDeadline());
+        entity.setImageThumbnail(dto.getImageThumbnail());
+        entity.setMinReviewsPerArticle(dto.getMinReviewsPerArticle());
+        entity.setMaxReviewsPerArticle(dto.getMaxReviewsPerArticle());
 
         if (dto.getUsersIds() != null) {
             for (Long userId : dto.getUsersIds()) {

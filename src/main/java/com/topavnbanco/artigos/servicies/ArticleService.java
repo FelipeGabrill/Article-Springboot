@@ -97,7 +97,8 @@ public class ArticleService {
         entity.setDescription(dto.getDescription());
         entity.setFormat(dto.getFormat());
         entity.setBody(dto.getBody());
-        entity.setCongresso((congresso));
+        entity.setCongresso(congresso);
+        entity.setTitle(dto.getTitle());
 
         Set<Long> userIds = dto.getArticlesUsersIds();
         if (userIds != null && !userIds.isEmpty()) {
