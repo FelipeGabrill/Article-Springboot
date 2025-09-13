@@ -1,7 +1,7 @@
 package com.topavnbanco.artigos.entities.enuns;
 
-public enum ReviewStatus {
+public enum ReviewPerArticleStatus {
     PENDING,
-    COMPLETED,
+    VALID,
     EXPIRED
 }

@@ -6,6 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tb_evaluation")
 @AllArgsConstructor
@@ -23,8 +26,12 @@ public class Evaluation {
 
     private Integer numberOfReviews;
 
-    @OneToOne(mappedBy = "evaluation", fetch = FetchType.LAZY)
-    private Review review;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "article_id", unique = true, nullable = false)
+    private Article article;
+
+    @OneToMany(mappedBy = "evaluation", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
 
     public Evaluation() {
     }

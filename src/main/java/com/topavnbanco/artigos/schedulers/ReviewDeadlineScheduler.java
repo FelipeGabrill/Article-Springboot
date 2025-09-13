@@ -9,20 +9,20 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class CongressoScheduler {
+public class ReviewDeadlineScheduler {
 
     @Autowired
     private Scheduler scheduler;
 
-    public void scheduleOnSubmissionDeadline(Congresso c) {
+    public void scheduleOnReviewDeadline(Congresso c) {
         try {
             JobDetail job = JobBuilder.newJob(AssignReviewersJob.class)
-                    .withIdentity("assignOnSubmission_cong_" + c.getId(), "reviews")
+                    .withIdentity("closeOnReview_cong_" + c.getId() + c.getId(), "reviews")
                     .usingJobData("congressoId", c.getId())
                     .build();
 
             Trigger trigger = TriggerBuilder.newTrigger()
-                    .startAt(Date.from(c.getSubmissionDeadline().toInstant()))
+                    .startAt(Date.from(c.getReviewDeadline().toInstant()))
                     .build();
 
             scheduler.scheduleJob(job, trigger);

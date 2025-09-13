@@ -6,6 +6,8 @@ import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
 import com.topavnbanco.artigos.schedulers.CongressoScheduler;
+import com.topavnbanco.artigos.schedulers.DailyCheckScheduler;
+import com.topavnbanco.artigos.schedulers.ReviewDeadlineScheduler;
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.servicies.exceptions.InvalidReviewRangeException;
 import com.topavnbanco.artigos.servicies.exceptions.ResourceNotFoundException;
@@ -33,6 +35,12 @@ public class CongressoService {
     @Autowired
     private CongressoScheduler congressoScheduler;
 
+    @Autowired
+    private DailyCheckScheduler dailyCheckScheduler;
+
+    @Autowired
+    private ReviewDeadlineScheduler reviewDeadlineScheduler;
+
     @Transactional(readOnly = true)
     public CongressoDTO findById(Long id) {
         Congresso congresso = repository.findById(id).orElseThrow(
@@ -43,7 +51,7 @@ public class CongressoService {
     @Transactional(readOnly = true)
     public Page<CongressoDTO> findAll(Pageable pageable) {
         Page<Congresso> result = repository.findAll(pageable);
-        return result.map(x -> new CongressoDTO(x));
+        return result.map(CongressoDTO::new);
     }
 
     @Transactional
@@ -55,6 +63,8 @@ public class CongressoService {
         entity.setSubmissionDeadline(Date.from(Instant.now().plusSeconds(100)));
         entity = repository.save(entity);
         congressoScheduler.scheduleOnSubmissionDeadline(entity);
+        dailyCheckScheduler.scheduleOnSubmissionDaily(entity);
+        reviewDeadlineScheduler.scheduleOnReviewDeadline(entity);
         return new CongressoDTO(entity);
     }
 

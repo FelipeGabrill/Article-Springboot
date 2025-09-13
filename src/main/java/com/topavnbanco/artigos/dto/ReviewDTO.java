@@ -31,8 +31,7 @@ public class ReviewDTO {
     @NotNull(message = "O artigo associado é obrigatório.")
     private Long articleId;
 
-    @Schema(description = "Identificador da avaliação consolidada associada à revisão", example = "1")
-    @NotNull(message = "A avaliação associada é obrigatória.")
+    @Schema(description = "Identificador da avaliação consolidada associada à revisão", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long evaluationId;
 
     @Schema(description = "Identificador do revisor", example = "1", accessMode = Schema.AccessMode.READ_ONLY)

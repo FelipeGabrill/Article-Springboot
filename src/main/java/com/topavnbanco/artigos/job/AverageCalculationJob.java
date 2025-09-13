@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.job;
 
+import com.topavnbanco.artigos.servicies.ReviewDeadlineService;
 import com.topavnbanco.artigos.servicies.ReviewerAssignmentService;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -9,15 +10,15 @@ import org.springframework.stereotype.Component;
 
 @DisallowConcurrentExecution
 @Component
-public class AssignReviewersJob implements Job {
+public class AverageCalculationJob implements Job {
 
     @Autowired
-    private ReviewerAssignmentService service;
+    private ReviewDeadlineService service;
 
     @Override
     public void execute(JobExecutionContext context) {
         Long congressoId = context.getJobDetail().getJobDataMap().getLong("congressoId");
-        service.assignReviewersForCongress(congressoId);
+        service.createEvaluation(congressoId);
     }
 }
 

@@ -1,38 +1,52 @@
 package com.topavnbanco.artigos.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.topavnbanco.artigos.entities.Evaluation;
+import com.topavnbanco.artigos.entities.Review;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Objects;
 
 @NoArgsConstructor
 @Getter
 public class EvaluationDTO {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(description = "Identificador único da avaliação", example = "15", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Nota final da avaliação (0 a 5)", example = "3.5")
-    @NotNull(message = "A nota final é obrigatória.")
-    @DecimalMin(value = "0.0", message = "A nota mínima permitida é 0.0.")
-    @DecimalMax(value = "5.0", message = "A nota máxima permitida é 5.0.")
+    @Schema(description = "Identificador do artigo avaliado", example = "42")
+    @NotNull(message = "O artigo avaliado é obrigatório.")
+    private Long articleId;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Nota final da avaliação (0 a 5)", example = "3.5", accessMode = Schema.AccessMode.READ_ONLY)
     private Double finalScore;
 
-    @Schema(description = "Número de revisões consideradas na avaliação", example = "3")
-    @NotNull(message = "O número de revisões é obrigatório.")
-    @Min(value = 1, message = "Deve haver pelo menos 1 revisão.")
-    @Max(value = 5, message = "O número máximo de revisões permitidas é 5.")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Número de revisões consideradas na avaliação", example = "3", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer numberOfReviews;
 
-    @Schema(description = "Identificador da revisão associada", example = "1")
-    @NotNull(message = "A revisão associada é obrigatória.")
-    private Long reviewId;
+    @Schema(description = "IDs das reviews consideradas na avaliação", example = "[10, 11, 12]")
+    @NotEmpty(message = "Informe pelo menos 1 review.")
+    @Size(min = 1, max = 5, message = "O número de reviews deve estar entre 1 e 5.")
+    private List<Long> reviewIds;
 
     public EvaluationDTO(Evaluation entity) {
         this.id = entity.getId();
+        this.articleId = entity.getArticle() != null ? entity.getArticle().getId() : null; // << correção
         this.finalScore = entity.getFinalScore();
         this.numberOfReviews = entity.getNumberOfReviews();
-        this.reviewId = entity.getReview().getId();
+        this.reviewIds = (entity.getReviews() == null) ? List.of()
+                : entity.getReviews().stream()
+                .map(Review::getId)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }

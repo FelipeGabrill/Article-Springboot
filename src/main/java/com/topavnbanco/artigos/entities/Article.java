@@ -1,7 +1,7 @@
 package com.topavnbanco.artigos.entities;
 
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
-import com.topavnbanco.artigos.entities.enuns.ReviewStatus;
+import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -31,7 +31,7 @@ public class Article {
 
     private String description;
 
-    private ReviewStatus status;
+    private ReviewPerArticleStatus status;
 
     @Lob
     private String body;
@@ -51,8 +51,11 @@ public class Article {
     )
     private Set<User> articlesUsers = new HashSet<>();
 
+    @OneToOne(mappedBy = "article", fetch = FetchType.LAZY)
+    private Evaluation evaluation;
+
     @OneToMany(mappedBy = "article")
-    private List<Review> review = new ArrayList<>();
+    private List<Review> reviews = new ArrayList<>();
 
     public Article() {
     }

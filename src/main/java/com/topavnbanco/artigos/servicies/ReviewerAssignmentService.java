@@ -1,29 +1,29 @@
 package com.topavnbanco.artigos.servicies;
 
 import com.topavnbanco.artigos.entities.Article;
+import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.Review;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
+import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.ReviewRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewerAssignmentService {
+
+    private static final Logger log = LoggerFactory.getLogger(ReviewerAssignmentService.class);
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -37,27 +37,28 @@ public class ReviewerAssignmentService {
     @Autowired
     private EmailService emailService;
 
-    @Value("${reviews.per.article:5}")
-    private int reviewersPerArticle;
-
-    @Value("${reviews.min.required:3}")
-    private int minRequiredReviews;
+    @Autowired
+    private CongressoRepository congressoRepository;
 
     @Transactional
-    public void assignForCongress(Long congressoId) {
+    public void assignReviewersForCongress(Long congressoId) {
+
+        Congresso congresso = congressoRepository.getReferenceById(congressoId);
+
         List<Article> articles = articleRepository.findByCongressoId(congressoId);
-        System.out.println("test");
+        log.info("Artigos encontrados para congressoId={}: {}", congressoId, articles.size());
 
         if (articles.isEmpty()) {
+            log.warn("Nenhum artigo encontrado para congressoId={}. Nada a atribuir.", congressoId);
             return;
         }
 
         for (Article a : articles) {
-            assignExactlyN(a, reviewersPerArticle);
+            assignExactlyNReviewers(a, congresso.getMaxReviewsPerArticle());
         }
     }
 
-    private void assignExactlyN(Article article, int n) {
+    private void assignExactlyNReviewers(Article article, int n) {
         List<Long> authorIds = article.getArticlesUsers()
                 .stream().map(User::getId).toList();
 
@@ -67,9 +68,11 @@ public class ReviewerAssignmentService {
             Review r = new Review();
             r.setArticle(article);
             r.setReviewer(reviewer);
+            r.setCreateAt(Date.from(Instant.now()));
             reviewRepository.save(r);
-            notifyReviewer(reviewer, article.getDescription());
-            System.out.println(r.getReviewer().getLogin());
+            //notifyReviewer(r.getReviewer(), r.getArticle().getTitle());
+            log.info("Review criada: reviewId={} articleId={} reviewerId={} login={}",
+                    r.getId(), r.getArticle().getId(), r.getReviewer().getId(), r.getReviewer().getLogin());
         }
     }
 

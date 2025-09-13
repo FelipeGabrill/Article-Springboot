@@ -6,6 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "tb_review")
 @AllArgsConstructor
@@ -23,6 +25,8 @@ public class Review {
 
     private Integer score;
 
+    private Date createAt;
+
     @ManyToOne
     @JoinColumn(name = "article_id")
     private Article article;
@@ -31,9 +35,10 @@ public class Review {
     @JoinColumn(name = "reviewer_id", nullable = false)
     private User reviewer;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "evaluation_id", unique = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evaluation_id")
     private Evaluation evaluation;
+
 
     public Review() {
     }

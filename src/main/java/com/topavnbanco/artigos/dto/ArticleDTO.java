@@ -1,11 +1,11 @@
 package com.topavnbanco.artigos.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.topavnbanco.artigos.entities.Article;
-import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.Review;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
-import com.topavnbanco.artigos.entities.enuns.ReviewStatus;
+import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,7 +45,7 @@ public class ArticleDTO {
     private ArticleFormat format;
 
     @Schema(description = "Status do artigo", example = "false", accessMode = Schema.AccessMode.READ_ONLY)
-    private ReviewStatus status;
+    private ReviewPerArticleStatus status;
 
     @Schema(description = "Data de publicação do artigo", example = "2025-09-08T12:00:00Z", accessMode = Schema.AccessMode.READ_ONLY)
     private Instant publishedAt;
@@ -54,10 +54,15 @@ public class ArticleDTO {
     private Long congressoId;
 
     @Schema(description = "Lista de usuários associados ao artigo")
+    @NotNull(message = "ID de pelo menos um usuário é obrigatório")
     private Set<Long> articlesUsersIds= new HashSet<>();
 
     @Schema(description = "Lista de revisões do artigo", accessMode = Schema.AccessMode.READ_ONLY)
     private List<Long> reviewsIds = new ArrayList<>();
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(description = "Identificador da avaliação do artigo (se existir)", example = "15", accessMode = Schema.AccessMode.READ_ONLY)
+    private Long evaluationId;
 
     public ArticleDTO(Article entity) {
         this.id = entity.getId();
@@ -66,8 +71,9 @@ public class ArticleDTO {
         this.body = entity.getBody();
         this.format = entity.getFormat();
         this.publishedAt = entity.getPublishedAt();
-        this.congressoId = entity.getCongresso().getId();
         this.title = entity.getTitle();
+        this.congressoId = (entity.getCongresso() != null ? entity.getCongresso().getId() : null);
+        this.evaluationId = (entity.getEvaluation() != null ? entity.getEvaluation().getId() : null);
 
         if (entity.getArticlesUsers() != null) {
             for (User user : entity.getArticlesUsers()) {
@@ -76,8 +82,8 @@ public class ArticleDTO {
                 }
             }
         }
-        if (entity.getReview() != null) {
-            for (Review review : entity.getReview()) {
+        if (entity.getReviews() != null) {
+            for (Review review : entity.getReviews()) {
                 if (review != null && review.getId() != null) {
                     this.reviewsIds.add(review.getId());
                 }

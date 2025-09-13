@@ -3,13 +3,10 @@ package com.topavnbanco.artigos.servicies;
 import com.topavnbanco.artigos.dto.ArticleDTO;
 import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.Congresso;
-import com.topavnbanco.artigos.entities.Review;
-import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
-import com.topavnbanco.artigos.entities.enuns.ReviewStatus;
+import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
-import com.topavnbanco.artigos.repositories.ReviewRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.servicies.exceptions.ResourceNotFoundException;
@@ -23,7 +20,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -34,9 +31,6 @@ public class ArticleService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ReviewRepository reviewRepository;
 
     @Autowired
     private CongressoRepository congressoRepository;
@@ -51,7 +45,7 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public Page<ArticleDTO> findAll(Pageable pageable) {
         Page<Article> result = repository.findAll(pageable);
-        return result.map(x -> new ArticleDTO(x));
+        return result.map(ArticleDTO::new);
     }
 
     @Transactional
@@ -60,7 +54,7 @@ public class ArticleService {
         copyDtoToEntity(dto, entity);
         entity.setFormat(ArticleFormat.PDF);
         entity.setPublishedAt(Instant.now());
-        entity.setStatus(ReviewStatus.PENDING);
+        entity.setStatus(ReviewPerArticleStatus.PENDING);
         entity = repository.save(entity);
         return new ArticleDTO(entity);
     }
@@ -92,36 +86,31 @@ public class ArticleService {
 
     private void copyDtoToEntity(ArticleDTO dto, Article entity) {
 
-        Congresso congresso = congressoRepository.findById(dto.getCongressoId()).orElseThrow(() -> new ResourceNotFoundException("Congresso não encontrado"));
+        if (dto.getCongressoId() == null) {
+            throw new ResourceNotFoundException("Congresso é obrigatório");
+        }
+        Congresso congresso = congressoRepository.findById(dto.getCongressoId())
+                .orElseThrow(() -> new ResourceNotFoundException("Congresso não encontrado"));
 
+        entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
-        entity.setFormat(dto.getFormat());
         entity.setBody(dto.getBody());
         entity.setCongresso(congresso);
-        entity.setTitle(dto.getTitle());
 
-        Set<Long> userIds = dto.getArticlesUsersIds();
-        if (userIds != null && !userIds.isEmpty()) {
-            for (Long userId : userIds) {
-                boolean exists = entity.getArticlesUsers() != null &&
-                        entity.getArticlesUsers().stream().anyMatch(u -> u.getId().equals(userId));
-                if (!exists) {
-                    User ref = userRepository.getReferenceById(userId);
-                    entity.getArticlesUsers().add(ref);
-                }
-            }
+        if (dto.getArticlesUsersIds() == null || dto.getArticlesUsersIds().isEmpty()) {
+            throw new ResourceNotFoundException("Usuários do artigo são obrigatórios");
         }
 
-        List<Long> reviewIds = dto.getReviewsIds();
-        if (reviewIds != null && !reviewIds.isEmpty()) {
-            for (Long reviewId : reviewIds) {
-                boolean exists = entity.getReview() != null &&
-                        entity.getReview().stream().anyMatch(r -> r.getId().equals(reviewId));
-                if (!exists) {
-                    Review ref = reviewRepository.getReferenceById(reviewId);
-                    entity.getReview().add(ref);
-                }
-            }
+        Set<Long> existing = userRepository.findExistingIds(dto.getArticlesUsersIds());
+        Set<Long> missing = new HashSet<>(dto.getArticlesUsersIds());
+        missing.removeAll(existing);
+        if (!missing.isEmpty()) throw new ResourceNotFoundException("Usuário(s) não encontrado(s): " + missing);
+
+        entity.getArticlesUsers().removeIf(u -> !existing.contains(u.getId()));
+
+        for (Long id : existing) {
+            boolean present = entity.getArticlesUsers().stream().anyMatch(u -> u.getId().equals(id));
+            if (!present) entity.getArticlesUsers().add(userRepository.getReferenceById(id));
         }
     }
 }

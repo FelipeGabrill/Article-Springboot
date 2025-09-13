@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -46,6 +47,27 @@ public interface UserRepository extends JpaRepository<User, Long> {
             @Param("authorIds") List<Long> authorIds,
             @Param("limit") int limit
     );
+
+    @Query(value = """
+    SELECT u.*
+    FROM tb_user u
+    WHERE u.is_reviewer = TRUE
+      AND u.id NOT IN (:usedReviewerIds)       
+      AND NOT EXISTS (SELECT 1 FROM tb_articles_users au
+                      WHERE au.article_id = :articleId
+                        AND au.user_id = u.id)
+    ORDER BY RAND()
+    LIMIT 1
+    """, nativeQuery = true)
+    Optional<User> pickOneRandomEligible(
+            @Param("articleId") Long articleId,
+            @Param("usedReviewerIds") Set<Long> usedReviewerIds
+    );
+
+
+    @Query("select u.id from User u where u.id in :ids")
+    Set<Long> findExistingIds(@Param("ids") Set<Long> ids);
+
     Optional<User> findByLogin(String login);
 
     boolean existsByLogin(String login);

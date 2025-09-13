@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Date;
+
 @Service
 public class ReviewService {
 
@@ -47,6 +50,7 @@ public class ReviewService {
     public ReviewDTO insert(ReviewDTO dto) {
         Review entity = new Review();
         copyDtoToEntity(dto, entity);
+        entity.setCreateAt(Date.from(Instant.now()));
         entity = repository.save(entity);
         return new ReviewDTO(entity);
     }
