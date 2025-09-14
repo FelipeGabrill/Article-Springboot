@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.entities;
 
+import com.topavnbanco.artigos.entities.enuns.CongressoModality;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,6 +27,13 @@ public class Congresso {
     private byte[] imageThumbnail;
 
     private String name;
+
+    private String description;
+
+    private String descriptionTitle;
+
+    @Enumerated(EnumType.STRING)
+    private CongressoModality congressoModality;
 
     private Date startDate;
 

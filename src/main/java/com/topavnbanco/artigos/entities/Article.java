@@ -31,11 +31,13 @@ public class Article {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
     private ReviewPerArticleStatus status;
 
     @Lob
     private String body;
 
+    @Enumerated(EnumType.STRING)
     private ArticleFormat format;
 
     private Instant publishedAt;

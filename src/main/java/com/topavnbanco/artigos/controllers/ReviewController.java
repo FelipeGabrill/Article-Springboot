@@ -57,28 +57,6 @@ public class ReviewController {
     }
 
     @Operation(
-            summary = "Create a new Review",
-            description = "Register a new review in the system",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Created"),
-                    @ApiResponse(responseCode = "400", description = "Bad Request"),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
-                    @ApiResponse(responseCode = "403", description = "Forbidden"),
-                    @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
-            }
-    )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping
-    public ResponseEntity<ReviewDTO> insert(@Valid @RequestBody ReviewDTO dto) {
-        dto = service.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(dto.getId())
-                .toUri();
-        return ResponseEntity.created(uri).body(dto);
-    }
-
-    @Operation(
             summary = "Update a Review",
             description = "Update the details of an existing review",
             responses = {

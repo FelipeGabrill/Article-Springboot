@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.dto;
 import com.topavnbanco.artigos.dto.user.UserDTO;
 import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.User;
+import com.topavnbanco.artigos.entities.enuns.CongressoModality;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -52,6 +53,17 @@ public class CongressoDTO {
     @NotNull(message = "O número mínimo de revisões por artigo é obrigatório.")
     private Integer minReviewsPerArticle;
 
+    @Schema(description = "Descrição do congresso", example = "Evento voltado para pesquisas de IA.")
+    @Size(max = 2000, message = "A descrição pode ter no máximo 2000 caracteres.")
+    private String description;
+
+    @Schema(description = "Título da descrição do congresso", example = "Sobre o evento")
+    @Size(max = 200, message = "O título da descrição pode ter no máximo 200 caracteres.")
+    private String descriptionTitle;
+
+    @Schema(description = "Modalidade do congresso", example = "PRESENCIAL")
+    private CongressoModality congressoModality;
+
     @Schema(description = "Data limite para submissão de artigos", example = "2025-06-20")
     @NotNull(message = "A data limite de submissão é obrigatória.")
     private Date submissionDeadline;
@@ -69,6 +81,9 @@ public class CongressoDTO {
         this.startDate = entity.getStartDate();
         this.endDate = entity.getEndDate();
         this.place = entity.getPlace();
+        this.description = entity.getDescription();
+        this.congressoModality = entity.getCongressoModality();
+        this.descriptionTitle = entity.getDescriptionTitle();
         this.submissionDeadline = entity.getSubmissionDeadline();
         this.reviewDeadline = entity.getReviewDeadline();
         this.imageThumbnail = entity.getImageThumbnail();
