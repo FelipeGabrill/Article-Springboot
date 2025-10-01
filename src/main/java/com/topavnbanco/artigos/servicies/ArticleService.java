@@ -112,5 +112,13 @@ public class ArticleService {
             boolean present = entity.getArticlesUsers().stream().anyMatch(u -> u.getId().equals(id));
             if (!present) entity.getArticlesUsers().add(userRepository.getReferenceById(id));
         }
+
+        if (dto.getKnowledgeArea() != null) {
+            for (String area : dto.getKnowledgeArea()) {
+                if (area != null && !area.isBlank()) {
+                    entity.getKnowledgeArea().add(area.trim());
+                }
+            }
+        }
     }
 }

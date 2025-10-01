@@ -14,10 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @NoArgsConstructor
 @Getter
@@ -65,6 +62,9 @@ public class ArticleDTO {
     @Schema(description = "Identificador da avaliação do artigo (se existir)", example = "15", accessMode = Schema.AccessMode.READ_ONLY)
     private Long evaluationId;
 
+    @Schema(description = "Áreas de conhecimento relacionadas ao congresso", example = "[\"Inteligência Artificial\", \"Ciência de Dados\", \"Engenharia de Software\"]")
+    private Set<String> knowledgeArea = new LinkedHashSet<>();
+
     public ArticleDTO(Article entity) {
         this.id = entity.getId();
         this.description = entity.getDescription();
@@ -87,6 +87,14 @@ public class ArticleDTO {
             for (Review review : entity.getReviews()) {
                 if (review != null && review.getId() != null) {
                     this.reviewsIds.add(review.getId());
+                }
+            }
+        }
+
+        if (entity.getKnowledgeArea() != null) {
+            for (String area : entity.getKnowledgeArea()) {
+                if (area != null && !area.isBlank()) {
+                    this.knowledgeArea.add(area);
                 }
             }
         }

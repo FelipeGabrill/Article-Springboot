@@ -9,9 +9,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @NoArgsConstructor
 @Getter
@@ -75,6 +73,9 @@ public class CongressoDTO {
     @Schema(description = "IDs dos usuários associados ao congresso", example = "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]")
     private List<Long> usersIds= new ArrayList<>();
 
+    @Schema(description = "Áreas de conhecimento relacionadas ao congresso", example = "[\"Inteligência Artificial\", \"Ciência de Dados\", \"Engenharia de Software\"]")
+    private Set<String> knowledgeArea = new LinkedHashSet<>();
+
     public CongressoDTO(Congresso entity) {
         this.id = entity.getId();
         this.name = entity.getName();
@@ -93,6 +94,14 @@ public class CongressoDTO {
         for(User user : entity.getUser()) {
             UserDTO dto = new UserDTO(user);
             usersIds.add(dto.getId());
+        }
+
+        if (entity.getKnowledgeArea() != null) {
+            for (String area : entity.getKnowledgeArea()) {
+                if (area != null && !area.isBlank()) {
+                    this.knowledgeArea.add(area);
+                }
+            }
         }
     }
 }

@@ -121,5 +121,14 @@ public class CongressoService {
                 entity.getUser().add(user);
             }
         }
+
+        if (dto.getKnowledgeArea() != null) {
+            for (String area : dto.getKnowledgeArea()) {
+                if (area != null && !area.isBlank()) {
+                    entity.getKnowledgeArea().add(area.trim());
+                }
+            }
+        }
+
     }
 }

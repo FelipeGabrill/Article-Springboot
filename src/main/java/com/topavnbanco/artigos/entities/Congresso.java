@@ -7,9 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "tb_congresso")
@@ -27,6 +25,8 @@ public class Congresso {
     private byte[] imageThumbnail;
 
     private String name;
+
+    private Set<String> knowledgeArea = new LinkedHashSet<>();
 
     private String description;
 
