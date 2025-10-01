@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.servicies;
 
+import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.servicies.exceptions.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +8,9 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class EmailService {
@@ -29,5 +33,32 @@ public class EmailService {
         catch (MailException e){
             throw new EmailException("Failed to send email");
         }
+    }
+
+    public void notifyPendingReminder(User reviewer, String articleTitle) {
+        String subject = "Lembrete: revisão pendente";
+        String body = String.format(
+                "Olá %s,\n\n" +
+                        "Você ainda possui uma revisão pendente para o artigo: %s.\n" +
+                        "Gentileza concluir a avaliação o quanto antes.\n\n" +
+                        "Atenciosamente,\nEquipe do Congresso",
+                reviewer.getUsernameUser(), articleTitle
+        );
+
+        sendEmail(reviewer.getLogin(), subject, body);
+    }
+
+    public void notifyReviewer(User reviewer, String articleTitle) {
+        String subject = "Nova revisão atribuída";
+        LocalDate deadline = LocalDate.now().plusDays(5);
+        String body = String.format(
+                "Olá %s,\n\n" +
+                        "Você foi designado para revisar o artigo: %s.\n" +
+                        "Por favor, acesse o sistema e realize sua avaliação até o prazo definido: %s.\n\n" +
+                        "Atenciosamente,\nEquipe do Congresso",
+                reviewer.getUsernameUser(), articleTitle, deadline.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        );
+
+       sendEmail(reviewer.getLogin(), subject, body);
     }
 }

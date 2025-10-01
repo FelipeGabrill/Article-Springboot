@@ -1,4 +1,4 @@
-package com.topavnbanco.artigos.servicies;
+package com.topavnbanco.artigos.servicies.review;
 
 import com.topavnbanco.artigos.entities.Evaluation;
 import com.topavnbanco.artigos.entities.Review;
@@ -59,9 +59,12 @@ public class ReviewDeadlineService {
                         evaluation.setArticle(article);
                         evaluation.setNumberOfReviews(qtd);
                         evaluation.setFinalScore(media);
-                        evaluationRepository.save(evaluation);
+
+                        article.setEvaluation(evaluation);
 
                         article.setStatus(ReviewPerArticleStatus.VALID);
+
+                        evaluationRepository.save(evaluation);
                         log.info("Evaluation criada/atualizada: articleId={} evalId={} qtd={} media={}",
                                 article.getId(), evaluation.getId(), qtd, media);
                     } else {
@@ -69,10 +72,8 @@ public class ReviewDeadlineService {
                         log.info("Article expirado: articleId={} qtdValidas={} minRequired={}",
                                 article.getId(), qtd, minReview);
                     }
-
-                    log.info("Media do artigo " + article.getId() + "= " + article.getEvaluation().getId());
-
                     articleRepository.save(article);
+                    log.info("Média do artigo {} = {}", article.getId(), media);
                 });
     }
 

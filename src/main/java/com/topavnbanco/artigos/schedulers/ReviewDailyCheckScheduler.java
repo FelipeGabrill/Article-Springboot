@@ -1,7 +1,7 @@
 package com.topavnbanco.artigos.schedulers;
 
 import com.topavnbanco.artigos.entities.Congresso;
-import com.topavnbanco.artigos.job.DailyToResendNewsJob;
+import com.topavnbanco.artigos.jobs.ResendPendingReviewsJob;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,14 +9,14 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class DailyCheckScheduler {
+public class ReviewDailyCheckScheduler {
 
     @Autowired
     private Scheduler scheduler;
 
     public void scheduleOnSubmissionDaily(Congresso c) {
         try {
-            JobDetail job = JobBuilder.newJob(DailyToResendNewsJob.class)
+            JobDetail job = JobBuilder.newJob(ResendPendingReviewsJob.class)
                     .withIdentity("resendNews_cong_" + c.getId(), "reviews")
                     .usingJobData("congressoId", c.getId())
                     .build();

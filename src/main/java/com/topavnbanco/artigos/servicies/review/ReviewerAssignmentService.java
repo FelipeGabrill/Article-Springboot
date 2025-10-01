@@ -1,4 +1,4 @@
-package com.topavnbanco.artigos.servicies;
+package com.topavnbanco.artigos.servicies.review;
 
 import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.Congresso;
@@ -8,6 +8,7 @@ import com.topavnbanco.artigos.repositories.ArticleRepository;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.ReviewRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
+import com.topavnbanco.artigos.servicies.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -70,24 +69,10 @@ public class ReviewerAssignmentService {
             r.setReviewer(reviewer);
             r.setCreateAt(Date.from(Instant.now()));
             reviewRepository.save(r);
-            //notifyReviewer(r.getReviewer(), r.getArticle().getTitle());
+            //emailService.notifyReviewer(r.getReviewer(), r.getArticle().getTitle());
             log.info("Review criada: reviewId={} articleId={} reviewerId={} login={}",
                     r.getId(), r.getArticle().getId(), r.getReviewer().getId(), r.getReviewer().getLogin());
         }
-    }
-
-    public void notifyReviewer(User reviewer, String articleTitle) {
-        String subject = "Nova revisão atribuída";
-        LocalDate deadline = LocalDate.now().plusDays(5);
-        String body = String.format(
-                "Olá %s,\n\n" +
-                        "Você foi designado para revisar o artigo: %s.\n" +
-                        "Por favor, acesse o sistema e realize sua avaliação até o prazo definido: %s.\n\n" +
-                        "Atenciosamente,\nEquipe do Congresso",
-                reviewer.getUsernameUser(), articleTitle, deadline.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        );
-
-        emailService.sendEmail(reviewer.getLogin(), subject, body);
     }
 }
 

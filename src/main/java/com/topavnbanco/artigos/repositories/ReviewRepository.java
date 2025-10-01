@@ -6,13 +6,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    List<Review> findByScoreIsNullAndCreateAtBefore(Date cutoff);
+    @Query("""
+       SELECT r
+         FROM Review r
+         JOIN r.article a
+         JOIN a.congresso c
+        WHERE r.score IS NULL
+          AND r.createAt < :cutoff
+          AND a.status = com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus.PENDING
+          AND c.id = :congressoId
+          AND c.reviewDeadline > :now
+    """)
+    List<Review> findPendingEligibleByCongresso(@Param("congressoId") Long congressoId,
+                                                @Param("cutoff")      Date cutoff,
+                                                @Param("now")         Date now);
 
     List<Review> findByArticle_Congresso_Id(Long congressoId);
 

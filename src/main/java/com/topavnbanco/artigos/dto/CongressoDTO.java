@@ -28,11 +28,11 @@ public class CongressoDTO {
     @Schema(description = "Imagem do congresso em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
     private byte[] imageThumbnail;
 
-    @Schema(description = "Data de início do congresso", example = "2025-07-10")
+    @Schema(description = "Data de início do congresso", example = "2026-07-10")
     @NotNull(message = "A data de início é obrigatória.")
     private Date startDate;
 
-    @Schema(description = "Data de término do congresso", example = "2025-07-15")
+    @Schema(description = "Data de término do congresso", example = "2026-07-15")
     @NotNull(message = "A data de término é obrigatória.")
     private Date endDate;
 
@@ -61,18 +61,18 @@ public class CongressoDTO {
     @Size(max = 200, message = "O título da descrição pode ter no máximo 200 caracteres.")
     private String descriptionTitle;
 
-    @Schema(description = "Modalidade do congresso", example = "PRESENCIAL")
+    @Schema(description = "Modalidade do congresso", example = "ONLINE")
     private CongressoModality congressoModality;
 
-    @Schema(description = "Data limite para submissão de artigos", example = "2025-06-20")
+    @Schema(description = "Data limite para submissão de artigos", example = "2026-06-20")
     @NotNull(message = "A data limite de submissão é obrigatória.")
     private Date submissionDeadline;
 
-    @Schema(description = "Data limite para revisão de artigos", example = "2025-06-20")
+    @Schema(description = "Data limite para revisão de artigos", example = "2026-06-20")
     @NotNull(message = "A data limite de revisão é obrigatória.")
     private Date reviewDeadline;
 
-    @Schema(description = "IDs dos usuários associados ao congresso", example = "[12, 34, 56]")
+    @Schema(description = "IDs dos usuários associados ao congresso", example = "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]")
     private List<Long> usersIds= new ArrayList<>();
 
     public CongressoDTO(Congresso entity) {

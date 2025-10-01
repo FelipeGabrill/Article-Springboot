@@ -1,7 +1,7 @@
 package com.topavnbanco.artigos.schedulers;
 
 import com.topavnbanco.artigos.entities.Congresso;
-import com.topavnbanco.artigos.job.AssignReviewersJob;
+import com.topavnbanco.artigos.jobs.DistributeMissingReviewsJob;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,20 +9,20 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 @Component
-public class ReviewDeadlineScheduler {
+public class CongressoLifecycleScheduler {
 
     @Autowired
     private Scheduler scheduler;
 
-    public void scheduleOnReviewDeadline(Congresso c) {
+    public void scheduleOnSubmissionDeadline(Congresso c) {
         try {
-            JobDetail job = JobBuilder.newJob(AssignReviewersJob.class)
-                    .withIdentity("closeOnReview_cong_" + c.getId() + c.getId(), "reviews")
+            JobDetail job = JobBuilder.newJob(DistributeMissingReviewsJob.class)
+                    .withIdentity("assignOnSubmission_cong_" + c.getId(), "reviews")
                     .usingJobData("congressoId", c.getId())
                     .build();
 
             Trigger trigger = TriggerBuilder.newTrigger()
-                    .startAt(Date.from(c.getReviewDeadline().toInstant()))
+                    .startAt(Date.from(c.getSubmissionDeadline().toInstant()))
                     .build();
 
             scheduler.scheduleJob(job, trigger);

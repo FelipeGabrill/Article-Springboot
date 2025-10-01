@@ -1,9 +1,10 @@
-package com.topavnbanco.artigos.servicies;
+package com.topavnbanco.artigos.servicies.review;
 
 import com.topavnbanco.artigos.entities.Review;
-import com.topavnbanco.artigos.entities.User;
+import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
 import com.topavnbanco.artigos.repositories.ReviewRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
+import com.topavnbanco.artigos.servicies.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,17 @@ public class ResendEmail {
     private EmailService emailService;
 
     @Transactional
-    public void resentEmail() {
-        Date cutoff = Date.from(Instant.now().minus(2, ChronoUnit.MINUTES));
+    public void resendEmail(Long congressoId) {
+        Instant nowI = Instant.now();
+        Date now = Date.from(nowI);
+        Date cutoff = Date.from(nowI.minus(2, ChronoUnit.MINUTES));
 
-        List<Review> pending = reviewRepository.findByScoreIsNullAndCreateAtBefore(cutoff);
+        List<Review> pending = reviewRepository.findPendingEligibleByCongresso(congressoId, cutoff, now);
         log.info("Reatribuição: encontradas {} reviews pendentes (cutoff={})", pending.size(), cutoff);
 
         Map<Long, List<Review>> byArticle = pending.stream()
                 .filter(r -> r.getArticle() != null && r.getArticle().getId() != null)
+                .filter(r -> r.getArticle().getStatus() == ReviewPerArticleStatus.PENDING)
                 .collect(Collectors.groupingBy(r -> r.getArticle().getId()));
 
         byArticle.forEach((articleId, reviewsDoArtigo) -> {
@@ -62,12 +66,12 @@ public class ResendEmail {
                                     reviewId, articleId, currentReviewerId, newReviewer.getId());
 
                             log.info("Send new email to : {}", r.getReviewer().getLogin());
-                            // notifyReviewer(newReviewer, r.getArticle().getTitle());
+                            // emailService.notifyReviewer(newReviewer, r.getArticle().getTitle());
                         }, () -> {
                             if (r.getReviewer() != null) {
                                 log.info("Sem novo elegível para reviewId={} artigo={}. Lembrete para reviewerId={}",
                                         reviewId, articleId, currentReviewerId);
-                                // notifyPendingReminder(r.getReviewer(), r.getArticle().getTitle());
+                                // emailService.notifyPendingReminder(r.getReviewer(), r.getArticle().getTitle());
                             } else {
                                 log.warn("Sem novo elegível e review sem reviewer (reviewId={} artigo={})",
                                         reviewId, articleId);
@@ -76,31 +80,4 @@ public class ResendEmail {
             }
         });
     }
-
-    private void notifyReviewer(User reviewer, String articleTitle) {
-        String subject = "Nova revisão atribuída";
-        String body = String.format(
-                "Olá %s,\n\n" +
-                        "Você foi designado para revisar o artigo: %s.\n" +
-                        "Por favor, acesse o sistema e realize sua avaliação no prazo estabelecido.\n\n" +
-                        "Atenciosamente,\nEquipe do Congresso",
-                reviewer.getUsernameUser(), articleTitle
-        );
-
-        emailService.sendEmail(reviewer.getLogin(), subject, body);
-    }
-
-    private void notifyPendingReminder(User reviewer, String articleTitle) {
-        String subject = "Lembrete: revisão pendente";
-        String body = String.format(
-                "Olá %s,\n\n" +
-                        "Você ainda possui uma revisão pendente para o artigo: %s.\n" +
-                        "Gentileza concluir a avaliação o quanto antes.\n\n" +
-                        "Atenciosamente,\nEquipe do Congresso",
-                reviewer.getUsernameUser(), articleTitle
-        );
-
-        emailService.sendEmail(reviewer.getLogin(), subject, body);
-    }
-
 }

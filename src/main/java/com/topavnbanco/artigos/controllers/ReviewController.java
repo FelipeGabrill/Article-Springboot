@@ -2,7 +2,7 @@ package com.topavnbanco.artigos.controllers;
 
 
 import com.topavnbanco.artigos.dto.ReviewDTO;
-import com.topavnbanco.artigos.servicies.ReviewService;
+import com.topavnbanco.artigos.servicies.review.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -14,9 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @Tag(name = "Review", description = "Endpoints for managing review")
 @RestController

@@ -1,8 +1,6 @@
-package com.topavnbanco.artigos.servicies;
+package com.topavnbanco.artigos.servicies.review;
 
 import com.topavnbanco.artigos.dto.ReviewDTO;
-import com.topavnbanco.artigos.entities.Article;
-import com.topavnbanco.artigos.entities.Evaluation;
 import com.topavnbanco.artigos.entities.Review;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
 import com.topavnbanco.artigos.repositories.EvaluationRepository;
@@ -82,13 +80,7 @@ public class ReviewService {
 
     private void copyDtoToEntity(ReviewDTO dto, Review entity) {
 
-        Article article = articleRepository.findById(dto.getArticleId()).orElseThrow(() -> new ResourceNotFoundException("Article não encontrado"));
-
-        Evaluation evaluation = evaluationRepository.findById(dto.getEvaluationId()).orElseThrow(() -> new ResourceNotFoundException("Evaluation não encontrado"));
-
         entity.setScore(dto.getScore());
         entity.setComment(dto.getComment());
-        entity.setArticle(article);
-        entity.setEvaluation(evaluation);
     }
 }

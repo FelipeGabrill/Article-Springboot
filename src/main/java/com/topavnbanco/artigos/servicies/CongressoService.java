@@ -5,9 +5,9 @@ import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
-import com.topavnbanco.artigos.schedulers.CongressoScheduler;
-import com.topavnbanco.artigos.schedulers.DailyCheckScheduler;
-import com.topavnbanco.artigos.schedulers.ReviewDeadlineScheduler;
+import com.topavnbanco.artigos.schedulers.CongressoLifecycleScheduler;
+import com.topavnbanco.artigos.schedulers.CongressoReviewDeadlineScheduler;
+import com.topavnbanco.artigos.schedulers.ReviewDailyCheckScheduler;
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.servicies.exceptions.InvalidReviewRangeException;
 import com.topavnbanco.artigos.servicies.exceptions.ResourceNotFoundException;
@@ -33,13 +33,13 @@ public class CongressoService {
     private UserRepository userRepository;
 
     @Autowired
-    private CongressoScheduler congressoScheduler;
+    private CongressoLifecycleScheduler congressoScheduler;
 
     @Autowired
-    private DailyCheckScheduler dailyCheckScheduler;
+    private ReviewDailyCheckScheduler dailyCheckScheduler;
 
     @Autowired
-    private ReviewDeadlineScheduler reviewDeadlineScheduler;
+    private CongressoReviewDeadlineScheduler reviewDeadlineScheduler;
 
     @Transactional(readOnly = true)
     public CongressoDTO findById(Long id) {
@@ -61,6 +61,7 @@ public class CongressoService {
         validReviewsPerArticle(dto.getMinReviewsPerArticle(), dto.getMaxReviewsPerArticle());
         //apenas permace assim por conta dos testes
         entity.setSubmissionDeadline(Date.from(Instant.now().plusSeconds(100)));
+        entity.setReviewDeadline(Date.from(Instant.now().plusSeconds(300)));
         entity = repository.save(entity);
         congressoScheduler.scheduleOnSubmissionDeadline(entity);
         dailyCheckScheduler.scheduleOnSubmissionDaily(entity);
@@ -106,6 +107,9 @@ public class CongressoService {
         entity.setStartDate(dto.getStartDate());
         entity.setEndDate(dto.getEndDate());
         entity.setReviewDeadline(dto.getReviewDeadline());
+        entity.setDescription(dto.getDescription());
+        entity.setDescriptionTitle(dto.getDescriptionTitle());
+        entity.setCongressoModality(dto.getCongressoModality());
         entity.setImageThumbnail(dto.getImageThumbnail());
         entity.setMinReviewsPerArticle(dto.getMinReviewsPerArticle());
         entity.setMaxReviewsPerArticle(dto.getMaxReviewsPerArticle());

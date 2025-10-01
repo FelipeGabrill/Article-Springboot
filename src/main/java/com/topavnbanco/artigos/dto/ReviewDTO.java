@@ -27,22 +27,21 @@ public class ReviewDTO {
     @Max(value = 5, message = "A nota máxima permitida é 5.")
     private Integer score;
 
-    @Schema(description = "Identificador do artigo revisado", example = "1")
-    @NotNull(message = "O artigo associado é obrigatório.")
+    @Schema(description = "Identificador do artigo revisado", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long articleId;
 
     @Schema(description = "Identificador da avaliação consolidada associada à revisão", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long evaluationId;
 
     @Schema(description = "Identificador do revisor", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
-    private UserSimpleDTO UserDTO;
+    private Long userId;
 
     public ReviewDTO(Review entity) {
         this.id = entity.getId();
         this.comment = entity.getComment();
         this.score = entity.getScore();
-        this.articleId= entity.getArticle().getId();
-        this.evaluationId = entity.getEvaluation().getId();
-        this.UserDTO = new UserSimpleDTO(entity.getReviewer());
+        this.articleId = entity.getArticle() != null ? entity.getArticle().getId() : null;
+        this.evaluationId = (entity.getEvaluation() != null) ? entity.getEvaluation().getId() : null;
+        this.userId = (entity.getReviewer() != null) ? entity.getReviewer().getId() : null;
     }
 }

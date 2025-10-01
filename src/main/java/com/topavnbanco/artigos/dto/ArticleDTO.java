@@ -50,7 +50,8 @@ public class ArticleDTO {
     @Schema(description = "Data de publicação do artigo", example = "2025-09-08T12:00:00Z", accessMode = Schema.AccessMode.READ_ONLY)
     private Instant publishedAt;
 
-    @Schema(description = "Id do congresso", example = "1")
+    @Schema(description = "Id do congresso", example = "2")
+    @NotNull(message = "O artigo deve estar contido em um congresso")
     private Long congressoId;
 
     @Schema(description = "Lista de usuários associados ao artigo")

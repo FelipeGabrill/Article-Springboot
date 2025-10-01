@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.controllers.exception;
 import java.time.Instant;
 
 import com.topavnbanco.artigos.servicies.exceptions.DatabaseException;
+import com.topavnbanco.artigos.servicies.exceptions.EmailException;
 import com.topavnbanco.artigos.servicies.exceptions.InvalidReviewRangeException;
 import com.topavnbanco.artigos.servicies.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -47,6 +48,18 @@ public class ResourceExceptionHandler {
         err.setTimestamp(Instant.now());
         err.setStatus(status.value());
         err.setError("Invalid Review Range exception");
+        err.setMessage(e.getMessage());
+        err.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(EmailException.class)
+    public ResponseEntity<StandardError> email(EmailException e, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        StandardError err = new StandardError();
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError("Email exception");
         err.setMessage(e.getMessage());
         err.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(err);
