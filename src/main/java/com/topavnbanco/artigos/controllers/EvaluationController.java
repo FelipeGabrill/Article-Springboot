@@ -31,7 +31,7 @@ public class EvaluationController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
     public ResponseEntity<EvaluationDTO> findById(@PathVariable Long id) {
         EvaluationDTO dto = service.findById(id);
@@ -45,7 +45,7 @@ public class EvaluationController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
     public ResponseEntity<Page<EvaluationDTO>> findByAll(Pageable pageable) {
         Page<EvaluationDTO> dto = service.findAll(pageable);

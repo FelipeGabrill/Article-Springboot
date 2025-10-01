@@ -35,7 +35,7 @@ public class CongressoController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
     public ResponseEntity<CongressoDTO> findById(@PathVariable Long id) {
         CongressoDTO dto = service.findById(id);
@@ -49,7 +49,7 @@ public class CongressoController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
     public ResponseEntity<Page<CongressoDTO>> findByAll(Pageable pageable) {
         Page<CongressoDTO> dto = service.findAll(pageable);

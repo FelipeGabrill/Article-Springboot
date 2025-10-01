@@ -32,7 +32,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
     public ResponseEntity<ReviewDTO> findById(@PathVariable Long id) {
         ReviewDTO dto = service.findById(id);
@@ -46,7 +46,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
     public ResponseEntity<Page<ReviewDTO>> findByAll(Pageable pageable) {
         Page<ReviewDTO> dto = service.findAll(pageable);
@@ -65,7 +65,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REVIEWER')")
     @PutMapping("/{id}")
     public ResponseEntity<ReviewDTO> update(@PathVariable Long id, @Valid @RequestBody ReviewDTO dto) {
         dto = service.update(id, dto);
@@ -84,7 +84,7 @@ public class ReviewController {
                     @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_REVIEWER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);

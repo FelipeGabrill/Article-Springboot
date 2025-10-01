@@ -35,7 +35,7 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getMe() {
         UserDTO dto = service.getMe();
@@ -50,7 +50,7 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         UserDTO dto = service.findById(id);
@@ -65,7 +65,7 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/articles/{id}")
     public ResponseEntity<UserArticlesDTO> findUserWithArticles(@PathVariable Long id) {
         UserArticlesDTO dto = service.findUserWithArticles(id);
@@ -79,7 +79,7 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
     public ResponseEntity<Page<UserSimpleDTO>> findByAll(Pageable pageable) {
         Page<UserSimpleDTO> dto = service.findAll(pageable);
@@ -96,7 +96,6 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO dto) {
         UserDTO newDto = service.insert(dto);
@@ -118,7 +117,7 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @PutMapping("/{id}")
     public ResponseEntity<UserSimpleDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
         UserSimpleDTO newDto = service.update(id, dto);
@@ -136,7 +135,7 @@ public class UserController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
@@ -150,7 +149,7 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/login/{login}")
     public ResponseEntity<Page<UserDTO>> getByLogin(
             @PathVariable String login, Pageable pageable) {

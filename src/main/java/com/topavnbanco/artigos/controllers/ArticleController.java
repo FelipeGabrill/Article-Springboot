@@ -35,7 +35,7 @@ public class ArticleController {
                     @ApiResponse(responseCode = "404", description = "Not Found")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
     public ResponseEntity<ArticleDTO> findById(@PathVariable Long id) {
         ArticleDTO dto = service.findById(id);
@@ -49,7 +49,7 @@ public class ArticleController {
                     @ApiResponse(responseCode = "200", description = "OK")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
     public ResponseEntity<Page<ArticleDTO>> findByAll(Pageable pageable) {
         Page<ArticleDTO> dto = service.findAll(pageable);
@@ -67,7 +67,7 @@ public class ArticleController {
                     @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT')")
     @PostMapping
     public ResponseEntity<ArticleDTO> insert(@Valid @RequestBody ArticleDTO dto) {
         dto = service.insert(dto);
@@ -90,7 +90,7 @@ public class ArticleController {
                     @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT')")
     @PutMapping("/{id}")
     public ResponseEntity<ArticleDTO> update(@PathVariable Long id, @Valid @RequestBody ArticleDTO dto) {
         dto = service.update(id, dto);
@@ -109,7 +109,7 @@ public class ArticleController {
                     @ApiResponse(responseCode = "422", description = "Unprocessable Entity")
             }
     )
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
