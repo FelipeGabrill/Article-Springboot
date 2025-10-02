@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.entities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -13,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role implements GrantedAuthority {
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,10 +23,6 @@ public class Role implements GrantedAuthority {
     private String authority;
 
     public Role() {
-    }
-
-    public Long getId() {
-        return id;
     }
 
     @Override

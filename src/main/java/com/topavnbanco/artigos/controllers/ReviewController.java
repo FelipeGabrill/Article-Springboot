@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.controllers;
 
 
 import com.topavnbanco.artigos.dto.ReviewDTO;
+import com.topavnbanco.artigos.queryfilters.ReviewQueryFilter;
 import com.topavnbanco.artigos.servicies.review.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -48,8 +49,8 @@ public class ReviewController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<ReviewDTO>> findByAll(Pageable pageable) {
-        Page<ReviewDTO> dto = service.findAll(pageable);
+    public ResponseEntity<Page<ReviewDTO>> findByAll(ReviewQueryFilter reviewQueryFilter, Pageable pageable) {
+        Page<ReviewDTO> dto = service.findAll(reviewQueryFilter, pageable);
         return ResponseEntity.ok(dto);
     }
 

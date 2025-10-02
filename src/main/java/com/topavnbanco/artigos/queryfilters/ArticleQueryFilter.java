@@ -5,9 +5,10 @@ import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
 import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
 import com.topavnbanco.artigos.specifications.ArticleSpec;
+import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
-
+@Data
 public class ArticleQueryFilter {
 
     private String knowledgeArea;

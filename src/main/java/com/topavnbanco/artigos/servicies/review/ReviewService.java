@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.servicies.review;
 
 import com.topavnbanco.artigos.dto.ReviewDTO;
 import com.topavnbanco.artigos.entities.Review;
+import com.topavnbanco.artigos.queryfilters.ReviewQueryFilter;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
 import com.topavnbanco.artigos.repositories.EvaluationRepository;
 import com.topavnbanco.artigos.repositories.ReviewRepository;
@@ -39,9 +40,9 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ReviewDTO> findAll(Pageable pageable) {
-        Page<Review> result = repository.findAll(pageable);
-        return result.map(x -> new ReviewDTO(x));
+    public Page<ReviewDTO> findAll(ReviewQueryFilter filter, Pageable pageable) {
+        Page<Review> result = repository.findAll(filter.toSpecification(), pageable);
+        return result.map(ReviewDTO::new);
     }
 
     @Transactional
