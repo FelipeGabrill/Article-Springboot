@@ -58,6 +58,20 @@ public class ArticleController {
     }
 
     @Operation(
+            summary = "List top 20 Article",
+            description = "Retrieve top 20 article with optional filters and pagination",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
+    @GetMapping("top20/{congressoId}")
+    public ResponseEntity<Page<ArticleDTO>> findTop20(@PathVariable Long congressoId) {
+        Page<ArticleDTO> dto = service.findTop20(congressoId);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
             summary = "Create a new Article",
             description = "Register a new article in the system",
             responses = {

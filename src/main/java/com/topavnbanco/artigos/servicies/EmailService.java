@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 
 @Service
 public class EmailService {
@@ -32,6 +33,15 @@ public class EmailService {
         }
         catch (MailException e){
             throw new EmailException("Failed to send email");
+        }
+    }
+
+    public void sendEmailBulk(Collection<String> recipients, String subject, String body) {
+        for (String to : recipients) {
+            if (to == null || to.isBlank()){
+                continue;
+            }
+            sendEmail(to, subject, body);
         }
     }
 

@@ -48,7 +48,6 @@ public class ResendEmail {
     }
 
     private void processArticle(Long articleId, List<Review> reviewsDoArtigo) {
-        // revisores já atribuídos a esse artigo (para excluir na próxima escolha)
         Set<Long> excluded = new HashSet<>(reviewRepository.findReviewerIdsByArticle(articleId));
 
         log.info("Artigo {}: {} reviews pendentes; revisores já usados (antes) = {}",

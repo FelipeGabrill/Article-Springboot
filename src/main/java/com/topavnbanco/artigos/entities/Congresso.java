@@ -24,6 +24,7 @@ public class Congresso {
 
     private byte[] imageThumbnail;
 
+    @Column(unique = true)
     private String name;
 
     @ElementCollection

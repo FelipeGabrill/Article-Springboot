@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.servicies;
 import com.topavnbanco.artigos.dto.ArticleDTO;
 import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.Congresso;
+import com.topavnbanco.artigos.entities.User;
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
 import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
 import com.topavnbanco.artigos.queryfilters.ArticleQueryFilter;
@@ -15,6 +16,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,6 +36,9 @@ public class ArticleService {
     private UserRepository userRepository;
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private CongressoRepository congressoRepository;
 
     @Transactional(readOnly = true)
@@ -47,6 +52,17 @@ public class ArticleService {
     public Page<ArticleDTO> findAll(ArticleQueryFilter filter, Pageable pageable) {
         Page<Article> result = repository.findAll(filter.toSpecification(), pageable);
         return result.map(ArticleDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ArticleDTO> findTop20(Long congressoId) {
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<Article> top20 = repository.findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(
+                congressoId,
+                ReviewPerArticleStatus.VALID,
+                pageable
+        );
+        return top20.map(ArticleDTO::new);
     }
 
     @Transactional
@@ -65,7 +81,6 @@ public class ArticleService {
         try {
             Article entity = repository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
-            entity = repository.save(entity);
             return new ArticleDTO(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Recurso não encontrado");

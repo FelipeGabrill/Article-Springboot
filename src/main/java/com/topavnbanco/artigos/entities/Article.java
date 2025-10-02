@@ -27,6 +27,7 @@ public class Article {
     @ElementCollection
     private Set<String> knowledgeArea = new LinkedHashSet<>();
 
+    @Column(unique = true)
     private String title;
 
     private String description;

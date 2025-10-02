@@ -35,6 +35,9 @@ public class ReviewDeadlineService {
     @Autowired
     private ArticleRepository articleRepository;
 
+    @Autowired
+    private RankingNotificationService rankingNotificationService;
+
     @Transactional
     public void createEvaluation(Long congressoId) {
         int minReview = congressoRepository.getReferenceById(congressoId).getMinReviewsPerArticle();
@@ -44,6 +47,8 @@ public class ReviewDeadlineService {
                 .collect(Collectors.groupingBy(Review::getArticle));
 
         grouped.forEach((article, reviews) -> processArticle(article, reviews, minReview));
+
+        rankingNotificationService.notifyTop20(congressoId);
     }
 
     private void processArticle(Article article, List<Review> reviews, int minReview) {
