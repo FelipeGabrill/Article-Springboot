@@ -44,40 +44,47 @@ public class ResendEmail {
                 .filter(r -> r.getArticle().getStatus() == ReviewPerArticleStatus.PENDING)
                 .collect(Collectors.groupingBy(r -> r.getArticle().getId()));
 
-        byArticle.forEach((articleId, reviewsDoArtigo) -> {
-            Set<Long> excluded = new HashSet<>(reviewRepository.findReviewerIdsByArticle(articleId));
+        byArticle.forEach(this::processArticle);
+    }
 
-            log.info("Artigo {}: {} reviews pendentes; revisores já usados (antes) = {}",
-                    articleId, reviewsDoArtigo.size(), excluded);
+    private void processArticle(Long articleId, List<Review> reviewsDoArtigo) {
+        // revisores já atribuídos a esse artigo (para excluir na próxima escolha)
+        Set<Long> excluded = new HashSet<>(reviewRepository.findReviewerIdsByArticle(articleId));
 
-            for (Review r : reviewsDoArtigo) {
-                Long reviewId = r.getId();
-                Long currentReviewerId = (r.getReviewer() != null ? r.getReviewer().getId() : null);
+        log.info("Artigo {}: {} reviews pendentes; revisores já usados (antes) = {}",
+                articleId, reviewsDoArtigo.size(), excluded);
 
-                userRepository.pickOneRandomEligible(articleId, excluded)
-                        .ifPresentOrElse(newReviewer -> {
-                            r.setReviewer(newReviewer);
-                            r.setCreateAt(Date.from(Instant.now()));
-                            reviewRepository.save(r);
+        for (Review r : reviewsDoArtigo) {
+            handleSingleReview(articleId, r, excluded);
+        }
+    }
 
-                            excluded.add(newReviewer.getId());
+    private void handleSingleReview(Long articleId, Review r, Set<Long> excluded) {
+        Long reviewId = r.getId();
+        Long currentReviewerId = (r.getReviewer() != null ? r.getReviewer().getId() : null);
 
-                            log.info("Reatribuída reviewId={} artigo={} oldReviewer={} newReviewer={}",
-                                    reviewId, articleId, currentReviewerId, newReviewer.getId());
+        userRepository.pickOneRandomEligible(articleId, excluded)
+                .ifPresentOrElse(newReviewer -> {
+                    r.setReviewer(newReviewer);
+                    r.setCreateAt(Date.from(Instant.now()));
+                    reviewRepository.save(r);
 
-                            log.info("Send new email to : {}", r.getReviewer().getLogin());
-                            // emailService.notifyReviewer(newReviewer, r.getArticle().getTitle());
-                        }, () -> {
-                            if (r.getReviewer() != null) {
-                                log.info("Sem novo elegível para reviewId={} artigo={}. Lembrete para reviewerId={}",
-                                        reviewId, articleId, currentReviewerId);
-                                // emailService.notifyPendingReminder(r.getReviewer(), r.getArticle().getTitle());
-                            } else {
-                                log.warn("Sem novo elegível e review sem reviewer (reviewId={} artigo={})",
-                                        reviewId, articleId);
-                            }
-                        });
-            }
-        });
+                    excluded.add(newReviewer.getId());
+
+                    log.info("Reatribuída reviewId={} artigo={} oldReviewer={} newReviewer={}",
+                            reviewId, articleId, currentReviewerId, newReviewer.getId());
+
+                    log.info("Send new email to : {}", r.getReviewer().getLogin());
+                    // emailService.notifyReviewer(newReviewer, r.getArticle().getTitle());
+                }, () -> {
+                    if (r.getReviewer() != null) {
+                        log.info("Sem novo elegível para reviewId={} artigo={}. Lembrete para reviewerId={}",
+                                reviewId, articleId, currentReviewerId);
+                        // emailService.notifyPendingReminder(r.getReviewer(), r.getArticle().getTitle());
+                    } else {
+                        log.warn("Sem novo elegível e review sem reviewer (reviewId={} artigo={})",
+                                reviewId, articleId);
+                    }
+                });
     }
 }

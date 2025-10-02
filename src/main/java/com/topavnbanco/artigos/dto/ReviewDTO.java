@@ -21,7 +21,7 @@ public class ReviewDTO {
     @Size(min = 5, max = 2000, message = "O comentário deve ter entre 5 e 2000 caracteres.")
     private String comment;
 
-    @Schema(description = "Nota atribuída ao artigo (0 a 5)", example = "9")
+    @Schema(description = "Nota atribuída ao artigo (0 a 5)", example = "5")
     @NotNull(message = "A nota é obrigatória.")
     @Min(value = 0, message = "A nota mínima permitida é 0.")
     @Max(value = 5, message = "A nota máxima permitida é 5.")

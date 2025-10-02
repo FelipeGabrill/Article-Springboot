@@ -12,7 +12,7 @@ public class RoleDTO {
     @Schema(description = "Unique identifier of the role", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Long id;
 
-    @Schema(description = "Name or authority of the role", example = "ROLE_ADMIN", required = true)
+    @Schema(description = "Name or authority of the role", example = "ROLE_ADMIN", requiredMode = Schema.RequiredMode.REQUIRED)
     private String authority;
 
     public RoleDTO(Role role) {
