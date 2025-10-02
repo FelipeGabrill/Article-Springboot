@@ -57,6 +57,7 @@ public class CongressoService {
 
     @Transactional
     public CongressoDTO insert(CongressoDTO dto) {
+        validName(dto.getName());
         Congresso entity = new Congresso();
         copyDtoToEntity(dto, entity);
         validReviewsPerArticle(dto.getMinReviewsPerArticle(), dto.getMaxReviewsPerArticle());
@@ -75,11 +76,30 @@ public class CongressoService {
         try {
             Congresso entity = repository.getReferenceById(id);
             validReviewsPerArticle(dto.getMinReviewsPerArticle(), dto.getMaxReviewsPerArticle());
+
+            if (dto.getName() == null || dto.getName().isBlank()) {
+                throw new DatabaseException("O nome do congresso é obrigatório.");
+            }
+            if (!dto.getName().equals(entity.getName()) &&
+                    repository.existsByNameAndIdNot(dto.getName(), id)) {
+                throw new DatabaseException("Já existe um congresso com esse nome.");
+            }
+
             copyDtoToEntity(dto, entity);
-            entity = repository.save(entity);
+            try {
+                entity = repository.save(entity);
+            } catch (DataIntegrityViolationException e) {
+                throw new DatabaseException("Já existe um congresso com esse nome.");
+            }
             return new CongressoDTO(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Recurso não encontrado");
+        }
+    }
+
+    public void validName(String name) {
+        if (repository.existsByName(name)) {
+            throw new DatabaseException("Já existe um congresso com esse nome.");
         }
     }
 

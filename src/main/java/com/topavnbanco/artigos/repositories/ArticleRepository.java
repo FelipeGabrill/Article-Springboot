@@ -22,4 +22,7 @@ public interface ArticleRepository extends JpaRepository<Article, Long>, JpaSpec
     );
 
     boolean existsByTitle(String title);
+
+    boolean existsByTitleAndIdNot(String title, Long id);
+
 }

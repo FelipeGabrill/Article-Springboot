@@ -7,4 +7,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CongressoRepository extends JpaRepository<Congresso, Long>, JpaSpecificationExecutor<Congresso> {
+
+    boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, Long id);
 }

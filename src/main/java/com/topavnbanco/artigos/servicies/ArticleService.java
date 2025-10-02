@@ -67,6 +67,7 @@ public class ArticleService {
 
     @Transactional
     public ArticleDTO insert(ArticleDTO dto) {
+        validTitle(dto.getTitle());
         Article entity = new Article();
         copyDtoToEntity(dto, entity);
         entity.setFormat(ArticleFormat.PDF);
@@ -80,10 +81,31 @@ public class ArticleService {
     public ArticleDTO update(Long id, ArticleDTO dto) {
         try {
             Article entity = repository.getReferenceById(id);
+
+            if (dto.getTitle() == null || dto.getTitle().isBlank()) {
+                throw new DatabaseException("O título do artigo é obrigatório.");
+            }
+            if (!dto.getTitle().equals(entity.getTitle()) &&
+                    repository.existsByTitleAndIdNot(dto.getTitle(), id)) {
+                throw new DatabaseException("Já existe um artigo com esse título.");
+            }
+
             copyDtoToEntity(dto, entity);
+            try {
+                entity = repository.save(entity);
+            } catch (DataIntegrityViolationException e) {
+                throw new DatabaseException("Já existe um artigo com esse título.");
+            }
+
             return new ArticleDTO(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Recurso não encontrado");
+        }
+    }
+
+    public void validTitle(String title) {
+        if (repository.existsByTitle(title)) {
+            throw new DatabaseException("Já existe um artigo com esse título.");
         }
     }
 
