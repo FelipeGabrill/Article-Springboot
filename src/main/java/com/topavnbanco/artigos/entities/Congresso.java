@@ -26,6 +26,7 @@ public class Congresso {
 
     private String name;
 
+    @ElementCollection
     private Set<String> knowledgeArea = new LinkedHashSet<>();
 
     private String description;

@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.servicies;
 import com.topavnbanco.artigos.dto.CongressoDTO;
 import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.User;
+import com.topavnbanco.artigos.queryfilters.CongressoQueryFilter;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
 import com.topavnbanco.artigos.schedulers.CongressoLifecycleScheduler;
@@ -49,8 +50,8 @@ public class CongressoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CongressoDTO> findAll(Pageable pageable) {
-        Page<Congresso> result = repository.findAll(pageable);
+    public Page<CongressoDTO> findAll(CongressoQueryFilter filter, Pageable pageable) {
+        Page<Congresso> result = repository.findAll(filter.toSpecification(), pageable);
         return result.map(CongressoDTO::new);
     }
 

@@ -5,6 +5,7 @@ import com.topavnbanco.artigos.entities.Article;
 import com.topavnbanco.artigos.entities.Congresso;
 import com.topavnbanco.artigos.entities.enuns.ArticleFormat;
 import com.topavnbanco.artigos.entities.enuns.ReviewPerArticleStatus;
+import com.topavnbanco.artigos.queryfilters.ArticleQueryFilter;
 import com.topavnbanco.artigos.repositories.ArticleRepository;
 import com.topavnbanco.artigos.repositories.CongressoRepository;
 import com.topavnbanco.artigos.repositories.UserRepository;
@@ -43,8 +44,8 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ArticleDTO> findAll(Pageable pageable) {
-        Page<Article> result = repository.findAll(pageable);
+    public Page<ArticleDTO> findAll(ArticleQueryFilter filter, Pageable pageable) {
+        Page<Article> result = repository.findAll(filter.toSpecification(), pageable);
         return result.map(ArticleDTO::new);
     }
 

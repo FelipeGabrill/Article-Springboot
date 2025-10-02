@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.controllers;
 
 
 import com.topavnbanco.artigos.dto.ArticleDTO;
+import com.topavnbanco.artigos.queryfilters.ArticleQueryFilter;
 import com.topavnbanco.artigos.servicies.ArticleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,8 +52,8 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<ArticleDTO>> findByAll(Pageable pageable) {
-        Page<ArticleDTO> dto = service.findAll(pageable);
+    public ResponseEntity<Page<ArticleDTO>> findByAll(ArticleQueryFilter articleQueryFilter, Pageable pageable) {
+        Page<ArticleDTO> dto = service.findAll(articleQueryFilter, pageable);
         return ResponseEntity.ok(dto);
     }
 

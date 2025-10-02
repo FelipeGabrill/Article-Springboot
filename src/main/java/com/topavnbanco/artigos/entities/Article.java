@@ -24,6 +24,7 @@ public class Article {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @ElementCollection
     private Set<String> knowledgeArea = new LinkedHashSet<>();
 
     private String title;

@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.controllers;
 
 
 import com.topavnbanco.artigos.dto.CongressoDTO;
+import com.topavnbanco.artigos.queryfilters.CongressoQueryFilter;
 import com.topavnbanco.artigos.servicies.CongressoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,8 +52,8 @@ public class CongressoController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<CongressoDTO>> findByAll(Pageable pageable) {
-        Page<CongressoDTO> dto = service.findAll(pageable);
+    public ResponseEntity<Page<CongressoDTO>> findByAll(CongressoQueryFilter congressoQueryFilter, Pageable pageable) {
+        Page<CongressoDTO> dto = service.findAll(congressoQueryFilter, pageable);
         return ResponseEntity.ok(dto);
     }
 
