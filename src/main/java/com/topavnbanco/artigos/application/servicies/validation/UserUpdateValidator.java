@@ -6,8 +6,8 @@ import java.util.Map;
 
 import com.topavnbanco.artigos.adapters.inbound.controllers.exception.FieldMessage;
 import com.topavnbanco.artigos.domain.user.User;
-import com.topavnbanco.artigos.domain.user.UserUpdateDTO;
-import com.topavnbanco.artigos.adapters.outbound.repositories.UserRepository;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserUpdateDTO;
+import com.topavnbanco.artigos.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerMapping;
 

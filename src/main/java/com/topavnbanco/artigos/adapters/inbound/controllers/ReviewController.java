@@ -1,9 +1,9 @@
 package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
-import com.topavnbanco.artigos.domain.review.ReviewDTO;
-import com.topavnbanco.artigos.infrastructre.queryfilters.ReviewQueryFilter;
-import com.topavnbanco.artigos.application.servicies.review.ReviewService;
+import com.topavnbanco.artigos.adapters.inbound.dtos.review.ReviewDTO;
+import com.topavnbanco.artigos.infrastructure.queryfilters.ReviewQueryFilter;
+import com.topavnbanco.artigos.application.servicies.review.ReviewServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
     @Autowired
-    private ReviewService service;
+    private ReviewServiceImpl service;
 
     @Operation(
             summary = "Get Review by ID",

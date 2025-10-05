@@ -6,85 +6,56 @@ import com.topavnbanco.artigos.domain.card.Card;
 import com.topavnbanco.artigos.domain.congresso.Congresso;
 import com.topavnbanco.artigos.domain.role.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
-@Entity
-@Table(name = "tb_user")
-@AllArgsConstructor
-@Getter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User implements UserDetails {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
-    @Setter
     private Long id;
 
-    @Setter
     private String usernameUser;
 
-    @Column(unique = true)
-    @Setter
     private String login;
 
-    @Setter
     private String password;
 
-    @Setter
     private String workPlace;
 
-    @Column(name = "membership_number", nullable = false, unique = true, updatable = false)
     private UUID membershipNumber;
 
-    @Setter
     private Boolean isReviewer;
 
-    @Setter
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id", nullable = false, unique = true)
     private Address address;
 
-    @Lob
-    @Column(columnDefinition = "BLOB")
-    @Setter
     private byte[] profileImage;
 
-    @Setter
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "card_id", nullable = false, unique = true)
     private Card card;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "congresso_id")
     private Congresso congresso;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tb_user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @Setter
-    @ManyToMany(mappedBy = "articlesUsers")
     private Set<Article> userArticles = new HashSet<>();
 
     public User() {
     }
 
-    @PrePersist
-    private void prePersist() {
-        if (membershipNumber == null) {
-            membershipNumber = UUID.randomUUID();
-        }
+    public User(Long id, String usernameUser, String password, String login, String workPlace, UUID membershipNumber, Boolean isReviewer, Address address, Card card, byte[] profileImage, Congresso congresso, Set<Role> roles, Set<Article> userArticles) {
+        this.id = id;
+        this.usernameUser = usernameUser;
+        this.password = password;
+        this.login = login;
+        this.workPlace = workPlace;
+        this.membershipNumber = membershipNumber;
+        this.isReviewer = isReviewer;
+        this.address = address;
+        this.card = card;
+        this.profileImage = profileImage;
+        this.congresso = congresso;
+        this.roles = roles;
+        this.userArticles = userArticles;
     }
 
     public void addRole(Role role) {
@@ -128,6 +99,107 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getUsernameUser() {
+        return usernameUser;
+    }
+
+    public void setUsernameUser(String usernameUser) {
+        this.usernameUser = usernameUser;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getWorkPlace() {
+        return workPlace;
+    }
+
+    public void setWorkPlace(String workPlace) {
+        this.workPlace = workPlace;
+    }
+
+    public UUID getMembershipNumber() {
+        return membershipNumber;
+    }
+
+    public void setMembershipNumber(UUID membershipNumber) {
+        this.membershipNumber = membershipNumber;
+    }
+
+    public Boolean getReviewer() {
+        return isReviewer;
+    }
+
+    public void setReviewer(Boolean reviewer) {
+        isReviewer = reviewer;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public byte[] getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(byte[] profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public Congresso getCongresso() {
+        return congresso;
+    }
+
+    public void setCongresso(Congresso congresso) {
+        this.congresso = congresso;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public Set<Article> getUserArticles() {
+        return userArticles;
+    }
+
+    public void setUserArticles(Set<Article> userArticles) {
+        this.userArticles = userArticles;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 
 }

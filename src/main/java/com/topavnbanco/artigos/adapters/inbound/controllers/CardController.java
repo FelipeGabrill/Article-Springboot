@@ -1,8 +1,8 @@
 package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
-import com.topavnbanco.artigos.domain.card.CardDTO;
-import com.topavnbanco.artigos.application.servicies.CardService;
+import com.topavnbanco.artigos.adapters.inbound.dtos.card.CardDTO;
+import com.topavnbanco.artigos.application.servicies.CardServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class CardController {
 
     @Autowired
-    private CardService service;
+    private CardServiceImpl service;
 
     @Operation(
             summary = "Get Card by ID",

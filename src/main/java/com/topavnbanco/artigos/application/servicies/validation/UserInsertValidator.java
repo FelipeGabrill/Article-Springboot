@@ -1,8 +1,8 @@
 package com.topavnbanco.artigos.application.servicies.validation;
 
 import com.topavnbanco.artigos.adapters.inbound.controllers.exception.FieldMessage;
-import com.topavnbanco.artigos.domain.user.UserInsertDTO;
-import com.topavnbanco.artigos.adapters.outbound.repositories.UserRepository;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserInsertDTO;
+import com.topavnbanco.artigos.adapters.outbound.repositories.JpaUserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.List;
 public class UserInsertValidator implements ConstraintValidator<UserInsertValid, UserInsertDTO> {
 
     @Autowired
-    private UserRepository repository;
+    private JpaUserRepository repository;
 
     @Override
     public void initialize(UserInsertValid ann) {

@@ -1,9 +1,9 @@
 package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
-import com.topavnbanco.artigos.domain.article.ArticleDTO;
-import com.topavnbanco.artigos.infrastructre.queryfilters.ArticleQueryFilter;
-import com.topavnbanco.artigos.application.servicies.ArticleService;
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleDTO;
+import com.topavnbanco.artigos.infrastructure.queryfilters.ArticleQueryFilter;
+import com.topavnbanco.artigos.application.servicies.ArticleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +26,7 @@ import java.net.URI;
 public class ArticleController {
 
     @Autowired
-    private ArticleService service;
+    private ArticleServiceImpl service;
 
     @Operation(
             summary = "Get Article by ID",

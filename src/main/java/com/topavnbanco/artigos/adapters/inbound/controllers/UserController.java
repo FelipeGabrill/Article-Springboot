@@ -2,8 +2,11 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 import java.net.URI;
 
-import com.topavnbanco.artigos.application.servicies.UserService;
-import com.topavnbanco.artigos.domain.user.*;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserInsertDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserSimpleDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserUpdateDTO;
+import com.topavnbanco.artigos.application.servicies.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +29,7 @@ import jakarta.validation.Valid;
 public class UserController {
 
     @Autowired
-    private UserService service;
+    private UserServiceImpl service;
 
     @Operation(
             summary = "Get Logged-in User",
@@ -54,21 +57,6 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         UserDTO dto = service.findById(id);
-        return ResponseEntity.ok(dto);
-    }
-
-    @Operation(
-            summary = "Get User with Articles by ID",
-            description = "Retrieve a user by their unique identifier",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK"),
-                    @ApiResponse(responseCode = "404", description = "Not Found")
-            }
-    )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
-    @GetMapping("/articles/{id}")
-    public ResponseEntity<UserArticlesDTO> findUserWithArticles(@PathVariable Long id) {
-        UserArticlesDTO dto = service.findUserWithArticles(id);
         return ResponseEntity.ok(dto);
     }
 

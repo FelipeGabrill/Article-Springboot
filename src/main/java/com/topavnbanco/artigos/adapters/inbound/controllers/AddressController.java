@@ -1,8 +1,8 @@
 package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
-import com.topavnbanco.artigos.domain.address.AddressDTO;
-import com.topavnbanco.artigos.application.servicies.AddressService;
+import com.topavnbanco.artigos.adapters.inbound.dtos.address.AddressDTO;
+import com.topavnbanco.artigos.application.servicies.AddressServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 public class AddressController {
 
     @Autowired
-    private AddressService service;
+    private AddressServiceImpl service;
 
     @Operation(
             summary = "Get Address by ID",

@@ -1,9 +1,10 @@
 package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
-import com.topavnbanco.artigos.domain.congresso.CongressoDTO;
-import com.topavnbanco.artigos.infrastructre.queryfilters.CongressoQueryFilter;
-import com.topavnbanco.artigos.application.servicies.CongressoService;
+import com.topavnbanco.artigos.adapters.inbound.dtos.congresso.CongressoDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.congresso.CongressoSimpleDTO;
+import com.topavnbanco.artigos.infrastructure.queryfilters.CongressoQueryFilter;
+import com.topavnbanco.artigos.application.servicies.CongressoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +27,7 @@ import java.net.URI;
 public class CongressoController {
 
     @Autowired
-    private CongressoService service;
+    private CongressoServiceImpl service;
 
     @Operation(
             summary = "Get Congresso by ID",
@@ -38,8 +39,8 @@ public class CongressoController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
-    public ResponseEntity<CongressoDTO> findById(@PathVariable Long id) {
-        CongressoDTO dto = service.findById(id);
+    public ResponseEntity<CongressoSimpleDTO> findById(@PathVariable Long id) {
+        CongressoSimpleDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
     }
 
@@ -52,8 +53,8 @@ public class CongressoController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<CongressoDTO>> findByAll(CongressoQueryFilter congressoQueryFilter, Pageable pageable) {
-        Page<CongressoDTO> dto = service.findAll(congressoQueryFilter, pageable);
+    public ResponseEntity<Page<CongressoSimpleDTO>> findByAll(CongressoQueryFilter congressoQueryFilter, Pageable pageable) {
+        Page<CongressoSimpleDTO> dto = service.findAll(congressoQueryFilter, pageable);
         return ResponseEntity.ok(dto);
     }
 

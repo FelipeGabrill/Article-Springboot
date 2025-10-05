@@ -1,28 +1,19 @@
 package com.topavnbanco.artigos.domain.role;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
-@Entity
-@Table(name = "tb_role")
-@AllArgsConstructor
-@Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role implements GrantedAuthority {
 
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @EqualsAndHashCode.Include
     private String authority;
 
     public Role() {
+    }
+
+    public Role(Long id, String authority) {
+        this.id = id;
+        this.authority = authority;
     }
 
     @Override
@@ -30,4 +21,15 @@ public class Role implements GrantedAuthority {
         return authority;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
 }
