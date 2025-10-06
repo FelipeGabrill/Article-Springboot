@@ -1,6 +1,5 @@
 package com.topavnbanco.artigos.adapters.outbound.entities;
 
-import com.topavnbanco.artigos.domain.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,10 +19,4 @@ public class JpaRoleEntity {
     @EqualsAndHashCode.Include
     private String authority;
 
-    public JpaRoleEntity(Role role) {
-        if (role != null) {
-            this.id = role.getId();
-            this.authority = role.getAuthority();
-        }
-    }
 }

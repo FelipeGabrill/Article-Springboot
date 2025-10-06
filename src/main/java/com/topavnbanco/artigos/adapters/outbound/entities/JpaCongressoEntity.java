@@ -54,38 +54,4 @@ public class JpaCongressoEntity {
     @OneToMany(mappedBy = "congresso")
     private List<JpaUserEntity> user = new ArrayList<>();
 
-    public JpaCongressoEntity(Congresso congresso) {
-        if (congresso != null) {
-            this.id = congresso.getId();
-            this.imageThumbnail = congresso.getImageThumbnail();
-            this.name = congresso.getName();
-            this.knowledgeArea = congresso.getKnowledgeArea() != null
-                    ? new LinkedHashSet<>(congresso.getKnowledgeArea())
-                    : new LinkedHashSet<>();
-            this.description = congresso.getDescription();
-            this.descriptionTitle = congresso.getDescriptionTitle();
-            this.congressoModality = congresso.getCongressoModality();
-            this.startDate = congresso.getStartDate();
-            this.endDate = congresso.getEndDate();
-            this.place = congresso.getPlace();
-            this.submissionDeadline = congresso.getSubmissionDeadline();
-            this.reviewDeadline = congresso.getReviewDeadline();
-            this.maxReviewsPerArticle = congresso.getMaxReviewsPerArticle();
-            this.minReviewsPerArticle = congresso.getMinReviewsPerArticle();
-            if (congresso.getUser() == null || congresso.getUser().isEmpty()) {
-                this.user = new ArrayList<>();
-            } else {
-                this.user = congresso.getUser().stream()
-                        .filter(u -> u != null && u.getId() != null)
-                        .map(u -> {
-                            JpaUserEntity e = new JpaUserEntity();
-                            e.setId(u.getId());
-                            return e;
-                        })
-                        .collect(Collectors.toCollection(ArrayList::new));
-            }
-        }
-
-
-    }
 }

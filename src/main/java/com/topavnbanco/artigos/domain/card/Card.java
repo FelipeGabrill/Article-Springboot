@@ -1,6 +1,7 @@
 package com.topavnbanco.artigos.domain.card;
 
 
+
 import java.util.Date;
 
 public class Card {

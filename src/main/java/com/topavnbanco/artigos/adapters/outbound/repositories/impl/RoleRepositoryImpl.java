@@ -4,6 +4,7 @@ import com.topavnbanco.artigos.adapters.outbound.entities.JpaRoleEntity;
 import com.topavnbanco.artigos.adapters.outbound.repositories.JpaRoleRepository;
 import com.topavnbanco.artigos.domain.role.Role;
 import com.topavnbanco.artigos.domain.role.repository.RoleRepository;
+import com.topavnbanco.artigos.infrastructure.mappers.RoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,31 +18,26 @@ public class RoleRepositoryImpl implements RoleRepository {
     @Autowired
     private JpaRoleRepository jpaRoleRepository;
 
+    @Autowired
+    private RoleMapper roleMapper;
+
     @Override
     public Role save(Role role) {
-        JpaRoleEntity r = jpaRoleRepository.save(new JpaRoleEntity(role));
-        return new Role(
-                r.getId(),
-                r.getAuthority()
-        );
+        JpaRoleEntity entity = roleMapper.toEntity(role);
+        entity = jpaRoleRepository.save(entity);
+        return roleMapper.toDomain(entity);
     }
 
     @Override
     public Optional<Role> findById(Long id) {
         return jpaRoleRepository.findById(id)
-                .map(r -> new Role(
-                        r.getId(),
-                        r.getAuthority()
-                ));
+                .map(roleMapper::toDomain);
     }
-
 
     @Override
     public Page<Role> findAll(Pageable pageable) {
-        return jpaRoleRepository.findAll(pageable) .map(r -> new Role(
-                r.getId(),
-                r.getAuthority()
-        ));
+        return jpaRoleRepository.findAll(pageable)
+                .map(roleMapper::toDomain);
     }
 
     @Override
@@ -56,9 +52,7 @@ public class RoleRepositoryImpl implements RoleRepository {
 
     @Override
     public Role getReferenceById(Long id) {
-        JpaRoleEntity r = jpaRoleRepository.getReferenceById(id);
-        return new Role(
-                r.getId(),
-                r.getAuthority());
+        JpaRoleEntity entity = jpaRoleRepository.getReferenceById(id);
+        return roleMapper.toDomain(entity);
     }
 }

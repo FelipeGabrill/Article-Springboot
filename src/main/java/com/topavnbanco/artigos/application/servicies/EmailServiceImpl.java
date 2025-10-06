@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.application.servicies;
 
+import com.topavnbanco.artigos.domain.role.Role;
 import com.topavnbanco.artigos.domain.user.User;
 import com.topavnbanco.artigos.application.servicies.exceptions.EmailException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 public class EmailServiceImpl {
@@ -34,6 +36,24 @@ public class EmailServiceImpl {
         catch (MailException e){
             throw new EmailException("Failed to send email");
         }
+    }
+
+    public void sendWelcomeEmail(String login, String name, Set<Role> roles) {
+
+        String rolesStr = roles.stream()
+                .map(r -> r.getAuthority().replace("ROLE_", "").toLowerCase())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("participant");
+
+        String subject = "Bem-vindo ao TopAvn Banco Artigos!";
+        String body = "Olá " + name + ",\n\n" +
+                "Seja muito bem-vindo à nossa plataforma! 🎉\n" +
+                "Agora você pode submeter seus artigos, participar de congressos e interagir com outros pesquisadores.\n\n" +
+                "Estamos felizes em tê-lo conosco!\n\n" +
+                "Equipe TopAvn Banco Artigos.\n\n" +
+                "O seu papel atual no sistema é: " + rolesStr + ".";
+
+        sendEmail(login, subject, body);
     }
 
     public void sendEmailBulk(Collection<String> recipients, String subject, String body) {

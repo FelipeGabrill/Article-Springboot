@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.domain.address;
 
+
 public class Address {
 
     private Long id;

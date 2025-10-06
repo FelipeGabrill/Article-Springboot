@@ -4,6 +4,7 @@ import com.topavnbanco.artigos.adapters.outbound.entities.JpaCardEntity;
 import com.topavnbanco.artigos.adapters.outbound.repositories.JpaCardRepository;
 import com.topavnbanco.artigos.domain.card.Card;
 import com.topavnbanco.artigos.domain.card.repository.CardRepository;
+import com.topavnbanco.artigos.infrastructure.mappers.CardMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,35 +16,26 @@ public class CardRepositoryImpl implements CardRepository {
     @Autowired
     private JpaCardRepository jpaCardRepository;
 
+    @Autowired
+    private CardMapper cardMapper;
+
     @Override
     public Card save(Card card) {
-        JpaCardEntity c = jpaCardRepository.save(new JpaCardEntity(card));
-        return new Card(
-                c.getId(),
-                c.getNumber(),
-                c.getExpired(),
-                c.getCvv()
-        );
+        JpaCardEntity entity = cardMapper.toEntity(card);
+        entity = jpaCardRepository.save(entity);
+        return cardMapper.toDomain(entity);
     }
 
     @Override
     public Optional<Card> findById(Long id) {
         return jpaCardRepository.findById(id)
-                .map(c -> new Card(
-                        c.getId(),
-                        c.getNumber(),
-                        c.getExpired(),
-                        c.getCvv()
-                ));
+                .map(cardMapper::toDomain);
     }
 
     @Override
     public Card getReferenceById(Long id) {
-        JpaCardEntity c = jpaCardRepository.getReferenceById(id);
-        return new Card( c.getId(),
-                c.getNumber(),
-                c.getExpired(),
-                c.getCvv());
+        JpaCardEntity entity = jpaCardRepository.getReferenceById(id);
+        return cardMapper.toDomain(entity);
     }
 
     @Override

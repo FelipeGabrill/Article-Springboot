@@ -1,13 +1,13 @@
 package com.topavnbanco.artigos.application.servicies.review;
 
-import com.topavnbanco.artigos.domain.article.Article;
+import com.topavnbanco.artigos.adapters.outbound.entities.JpaArticleEntity;
+import com.topavnbanco.artigos.adapters.outbound.entities.JpaEvaluationEntity;
+import com.topavnbanco.artigos.adapters.outbound.entities.JpaReviewEntity;
+import com.topavnbanco.artigos.adapters.outbound.repositories.JpaArticleRepository;
+import com.topavnbanco.artigos.adapters.outbound.repositories.JpaCongressoRepository;
+import com.topavnbanco.artigos.adapters.outbound.repositories.JpaEvaluationRepository;
+import com.topavnbanco.artigos.adapters.outbound.repositories.JpaReviewRepository;
 import com.topavnbanco.artigos.domain.article.enuns.ReviewPerArticleStatus;
-import com.topavnbanco.artigos.domain.article.repository.ArticleRepository;
-import com.topavnbanco.artigos.domain.congresso.repository.CongressoRepository;
-import com.topavnbanco.artigos.domain.evaluation.Evaluation;
-import com.topavnbanco.artigos.domain.evaluation.repository.EvaluationRepository;
-import com.topavnbanco.artigos.domain.review.Review;
-import com.topavnbanco.artigos.domain.review.repository.ReviewRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +24,16 @@ public class ReviewDeadlineServiceImpl {
     private static final Logger log = LoggerFactory.getLogger(ReviewDeadlineServiceImpl.class);
 
     @Autowired
-    private ReviewRepository reviewRepository;
+    private JpaReviewRepository reviewRepository;
 
     @Autowired
-    private CongressoRepository congressoRepository;
+    private JpaCongressoRepository congressoRepository;
 
     @Autowired
-    private EvaluationRepository evaluationRepository;
+    private JpaEvaluationRepository evaluationRepository;
 
     @Autowired
-    private ArticleRepository articleRepository;
+    private JpaArticleRepository articleRepository;
 
     @Autowired
     private RankingNotificationServiceImpl rankingNotificationService;
@@ -42,22 +42,22 @@ public class ReviewDeadlineServiceImpl {
     public void createEvaluation(Long congressoId) {
         int minReview = congressoRepository.getReferenceById(congressoId).getMinReviewsPerArticle();
 
-        Map<Article, List<Review>> grouped = reviewRepository
+        Map<JpaArticleEntity, List<JpaReviewEntity>> grouped = reviewRepository
                 .findByArticle_Congresso_Id(congressoId).stream()
-                .collect(Collectors.groupingBy(Review::getArticle));
+                .collect(Collectors.groupingBy(JpaReviewEntity::getArticle));
 
         grouped.forEach((article, reviews) -> processArticle(article, reviews, minReview));
 
         rankingNotificationService.notifyTop20(congressoId);
     }
 
-    private void processArticle(Article article, List<Review> reviews, int minReview) {
-        List<Review> valid = reviews.stream()
+    private void processArticle(JpaArticleEntity article, List<JpaReviewEntity> reviews, int minReview) {
+        List<JpaReviewEntity> valid = reviews.stream()
                 .filter(r -> r.getScore() != null)
                 .filter(r -> r.getComment() != null && !r.getComment().isBlank())
                 .toList();
 
-        List<Review> invalid = reviews.stream()
+        List<JpaReviewEntity> invalid = reviews.stream()
                 .filter(r -> r.getScore() == null
                         || r.getComment() == null
                         || r.getComment().trim().isBlank())
@@ -68,7 +68,7 @@ public class ReviewDeadlineServiceImpl {
         }
 
         int qtd = valid.size();
-        double media = valid.stream().mapToDouble(Review::getScore).average().orElse(0.0);
+        double media = valid.stream().mapToDouble(JpaReviewEntity::getScore).average().orElse(0.0);
         createOrUpdateEvaluation(article, valid, qtd, media);
 
         if (qtd >= minReview) {
@@ -84,20 +84,22 @@ public class ReviewDeadlineServiceImpl {
         log.info("Média do artigo {} = {}", article.getId(), media);
     }
 
-    private void createOrUpdateEvaluation(Article article, List<Review> valid, int qtd, double media) {
+    private void createOrUpdateEvaluation(JpaArticleEntity article, List<JpaReviewEntity> valid, int qtd, double media) {
 
         double mediaTruncated = Math.floor(media * 100) / 100.0;
 
-        Evaluation evaluation = new Evaluation();
-        evaluation.setReviews(valid);
-        evaluation.setArticle(article);
-        evaluation.setNumberOfReviews(qtd);
-        evaluation.setFinalScore(mediaTruncated);
+        JpaEvaluationEntity evaluationEntity = evaluationRepository.findByArticle_Id(article.getId())
+                .orElseGet(JpaEvaluationEntity::new);
+        valid.forEach(r -> r.setEvaluation(evaluationEntity));
+        evaluationEntity.setReviews(valid);
+        evaluationEntity.setArticle(article);
+        evaluationEntity.setNumberOfReviews(qtd);
+        evaluationEntity.setFinalScore(mediaTruncated);
 
-        article.setEvaluation(evaluation);
-        evaluationRepository.save(evaluation);
+        article.setEvaluation(evaluationEntity);
+        evaluationRepository.save(evaluationEntity);
 
         log.info("Evaluation criada/atualizada: articleId={} evalId={} qtd={} media={}",
-                article.getId(), evaluation.getId(), qtd, media);
+                article.getId(), evaluationEntity.getId(), qtd, media);
     }
 }

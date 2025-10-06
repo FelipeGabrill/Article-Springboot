@@ -81,26 +81,8 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
         copyDtoToEntityInsert(dto, entity);
         entity = repository.save(entity);
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-//        sendWelcomeEmail(entity.getLogin(), entity.getUsernameUser(), entity.getRoles());
+        //emailService.sendWelcomeEmail(entity.getLogin(), entity.getUsernameUser(), entity.getRoles());
         return new UserDTO(entity);
-    }
-
-    private void sendWelcomeEmail(String login, String name, Set<Role> roles) {
-
-        String rolesStr = roles.stream()
-                .map(r -> r.getAuthority().replace("ROLE_", "").toLowerCase())
-                .reduce((a, b) -> a + ", " + b)
-                .orElse("participant");
-
-        String subject = "Bem-vindo ao TopAvn Banco Artigos!";
-        String body = "Olá " + name + ",\n\n" +
-                "Seja muito bem-vindo à nossa plataforma! 🎉\n" +
-                "Agora você pode submeter seus artigos, participar de congressos e interagir com outros pesquisadores.\n\n" +
-                "Estamos felizes em tê-lo conosco!\n\n" +
-                "Equipe TopAvn Banco Artigos.\n\n" +
-                "O seu papel atual no sistema é: " + rolesStr + ".";
-
-        emailService.sendEmail(login, subject, body);
     }
 
     @Transactional

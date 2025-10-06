@@ -30,13 +30,4 @@ public class JpaCardEntity {
     private Date expired;
 
     private Integer cvv;
-
-    public JpaCardEntity(Card card) {
-        if (card != null) {
-            this.id = card.getId();
-            this.number = card.getNumber();
-            this.expired = card.getExpired();
-            this.cvv = card.getCvv();
-        }
-    }
 }
