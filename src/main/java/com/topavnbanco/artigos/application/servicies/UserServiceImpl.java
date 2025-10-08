@@ -180,9 +180,15 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
 //        }
 
         for (RoleDTO roleDto : dto.getRoles()) {
-            boolean exists = entity.getRoles().stream().anyMatch(role -> role.getId().equals(roleDto.getId()));
+            String authority = roleDto.getAuthority().trim();
+
+            boolean exists = entity.getRoles().stream()
+                    .anyMatch(role -> role.getAuthority() != null &&
+                            role.getAuthority().equalsIgnoreCase(authority));
+
             if (!exists) {
-                Role role = roleRepository.getReferenceById(roleDto.getId());
+                Role role = roleRepository.findByAuthority(authority)
+                        .orElseThrow(() -> new ResourceNotFoundException("Role not found: " + authority));
                 entity.getRoles().add(role);
             }
         }

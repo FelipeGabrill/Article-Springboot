@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 import com.topavnbanco.artigos.adapters.inbound.dtos.congresso.CongressoDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.congresso.CongressoSimpleDTO;
+import com.topavnbanco.artigos.application.usecases.CongressoUseCases;
 import com.topavnbanco.artigos.infrastructure.queryfilters.CongressoQueryFilter;
 import com.topavnbanco.artigos.application.servicies.CongressoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ import java.net.URI;
 public class CongressoController {
 
     @Autowired
-    private CongressoServiceImpl service;
+    private CongressoUseCases service;
 
     @Operation(
             summary = "Get Congresso by ID",

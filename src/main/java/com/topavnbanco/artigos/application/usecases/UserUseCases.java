@@ -12,6 +12,8 @@ public interface UserUseCases {
 
     Page<UserSimpleDTO> findAllByCongressoId(Long congressoId, Pageable pageable);
 
+    UserArticleDTO findByIdWithArticles(Long id, Pageable pageable);
+
     UserDTO insert(UserInsertDTO dto);
 
     UserSimpleDTO update(Long id, UserUpdateDTO dto);

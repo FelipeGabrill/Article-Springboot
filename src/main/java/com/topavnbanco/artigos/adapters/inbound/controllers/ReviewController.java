@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
 import com.topavnbanco.artigos.adapters.inbound.dtos.review.ReviewDTO;
+import com.topavnbanco.artigos.application.usecases.ReviewUseCases;
 import com.topavnbanco.artigos.infrastructure.queryfilters.ReviewQueryFilter;
 import com.topavnbanco.artigos.application.servicies.review.ReviewServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
     @Autowired
-    private ReviewServiceImpl service;
+    private ReviewUseCases service;
 
     @Operation(
             summary = "Get Review by ID",

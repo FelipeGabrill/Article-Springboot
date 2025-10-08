@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleSimpleDTO;
+import com.topavnbanco.artigos.application.usecases.ArticleUseCases;
 import com.topavnbanco.artigos.infrastructure.queryfilters.ArticleQueryFilter;
 import com.topavnbanco.artigos.application.servicies.ArticleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ import java.net.URI;
 public class ArticleController {
 
     @Autowired
-    private ArticleServiceImpl service;
+    private ArticleUseCases service;
 
     @Operation(
             summary = "Get Article by ID",
@@ -70,20 +71,6 @@ public class ArticleController {
     @GetMapping
     public ResponseEntity<Page<ArticleSimpleDTO>> findAll(ArticleQueryFilter articleQueryFilter, Pageable pageable) {
         Page<ArticleSimpleDTO> dto = service.findAll(articleQueryFilter, pageable);
-        return ResponseEntity.ok(dto);
-    }
-
-    @Operation(
-            summary = "List all Article by congresso Id",
-            description = "Retrieve all article by congresso Id and pagination",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "OK")
-            }
-    )
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
-    @GetMapping("/congressoId/{congressoId}")
-    public ResponseEntity<Page<ArticleSimpleDTO>> findByCongressoId(@PathVariable Long congressoId, Pageable pageable) {
-        Page<ArticleSimpleDTO> dto = service.findByCongressoId(congressoId, pageable);
         return ResponseEntity.ok(dto);
     }
 

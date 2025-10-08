@@ -18,8 +18,6 @@ public interface ArticleUseCases {
 
     ArticleSimpleDTO update(Long id, ArticleDTO dto);
 
-    Page<ArticleSimpleDTO> findByCongressoId(Long id, Pageable pageable);
-
     void delete(Long id);
 
     String findArticleBodyById(Long id);

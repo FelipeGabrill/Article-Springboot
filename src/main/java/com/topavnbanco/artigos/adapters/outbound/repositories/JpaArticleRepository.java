@@ -14,8 +14,6 @@ public interface JpaArticleRepository extends JpaRepository<JpaArticleEntity, Lo
 
     List<JpaArticleEntity> findByCongressoId(Long congressoId);
 
-    Page<JpaArticleEntity> findByCongressoId(Long congressoId, Pageable pageable);
-
     Page<JpaArticleEntity> findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(
             Long congressoId,
             ReviewPerArticleStatus status,

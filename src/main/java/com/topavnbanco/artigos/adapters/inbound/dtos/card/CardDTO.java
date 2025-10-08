@@ -23,7 +23,7 @@ public class CardDTO {
     @Pattern(regexp = "^[0-9]{16}$", message = "O número do cartão deve conter exatamente 16 dígitos numéricos.")
     private String number;
 
-    @Schema(description = "Data de expiração do cartão", example = "2027-12-01")
+    @Schema(description = "Data de expiração do cartão", example = "2026-12-01")
     @NotNull(message = "A data de expiração é obrigatória.")
     @Future(message = "A data de expiração deve estar no futuro.")
     private Date expired;

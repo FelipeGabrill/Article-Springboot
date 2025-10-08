@@ -62,11 +62,6 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
-    public Page<Article> findByCongressoId(Long congressoId, Pageable pageable) {
-        return jpaArticleRepository.findByCongressoId(congressoId, pageable).map(a -> articleMapper.toDomain(a));
-    }
-
-    @Override
     public List<Article> findByCongressoId(Long congressoId) {
         return articleMapper.toDomainList(jpaArticleRepository.findByCongressoId(congressoId));
     }

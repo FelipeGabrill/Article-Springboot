@@ -4,6 +4,8 @@ import java.net.URI;
 
 import com.topavnbanco.artigos.adapters.inbound.dtos.user.*;
 import com.topavnbanco.artigos.application.servicies.UserServiceImpl;
+import com.topavnbanco.artigos.application.usecases.UserUseCases;
+import com.topavnbanco.artigos.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +28,7 @@ import jakarta.validation.Valid;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl service;
+    private UserUseCases service;
 
     @Operation(
             summary = "Get Logged-in User",

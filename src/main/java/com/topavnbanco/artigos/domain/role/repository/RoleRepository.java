@@ -12,6 +12,8 @@ public interface RoleRepository {
 
     Optional<Role> findById(Long id);
 
+    Optional<Role>  findByAuthority(String authority);
+
     Page<Role> findAll(Pageable pageable);
 
     void deleteById(Long id);

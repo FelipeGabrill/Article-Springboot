@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 import com.topavnbanco.artigos.adapters.inbound.dtos.evaluation.EvaluationDTO;
 import com.topavnbanco.artigos.application.servicies.EvaluationServiceImpl;
+import com.topavnbanco.artigos.application.usecases.EvaluationUseCases;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class EvaluationController {
 
     @Autowired
-    private EvaluationServiceImpl service;
+    private EvaluationUseCases service;
 
     @Operation(
             summary = "Get Evaluation by ID",

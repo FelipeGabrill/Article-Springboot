@@ -60,12 +60,6 @@ public class ArticleServiceImpl implements ArticleUseCases {
     }
 
     @Transactional(readOnly = true)
-    public Page<ArticleSimpleDTO> findByCongressoId(Long id, Pageable pageable) {
-        Page<Article> result = repository.findByCongressoId(id, pageable);
-        return result.map(ArticleSimpleDTO::new);
-    }
-
-    @Transactional(readOnly = true)
     public Page<ArticleSimpleDTO> findAll(ArticleQueryFilter filter, Pageable pageable) {
         Page<Article> result = repository.findAll(filter.toSpecification(), pageable);
         return result.map(ArticleSimpleDTO::new);

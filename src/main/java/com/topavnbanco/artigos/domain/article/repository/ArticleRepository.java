@@ -25,8 +25,6 @@ public interface ArticleRepository {
 
     Article getReferenceById(Long id);
 
-    Page<Article> findByCongressoId(Long congressoId, Pageable pageable);
-
     List<Article> findByCongressoId(Long congressoId);
 
     Page<Article> findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(

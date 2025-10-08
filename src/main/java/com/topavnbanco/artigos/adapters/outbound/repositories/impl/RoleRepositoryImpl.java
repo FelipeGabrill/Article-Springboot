@@ -35,6 +35,11 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
+    public Optional<Role> findByAuthority(String authority) {
+        return jpaRoleRepository.findByAuthority(authority).map(roleMapper::toDomain);
+    }
+
+    @Override
     public Page<Role> findAll(Pageable pageable) {
         return jpaRoleRepository.findAll(pageable)
                 .map(roleMapper::toDomain);
