@@ -21,6 +21,8 @@ public interface UserRepository {
 
     Optional<User> findById(Long id);
 
+    List<User> findByCongressoId(Long congressoId);
+
     boolean existsById(Long id);
 
     List<User> pickRandomEligible(
@@ -28,6 +30,8 @@ public interface UserRepository {
             List<Long> authorIds,
             int limit
     );
+
+    Page<User> findAllByCongressoId(Long congressoId, Pageable pageable);
 
     User getReferenceById(Long id);
 

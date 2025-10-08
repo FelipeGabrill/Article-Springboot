@@ -53,7 +53,7 @@ public class CongressoController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<CongressoSimpleDTO>> findByAll(CongressoQueryFilter congressoQueryFilter, Pageable pageable) {
+    public ResponseEntity<Page<CongressoSimpleDTO>> findAll(CongressoQueryFilter congressoQueryFilter, Pageable pageable) {
         Page<CongressoSimpleDTO> dto = service.findAll(congressoQueryFilter, pageable);
         return ResponseEntity.ok(dto);
     }

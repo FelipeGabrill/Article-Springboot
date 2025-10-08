@@ -3,6 +3,7 @@ package com.topavnbanco.artigos.domain.article.repository;
 import com.topavnbanco.artigos.adapters.outbound.entities.JpaArticleEntity;
 import com.topavnbanco.artigos.domain.article.Article;
 import com.topavnbanco.artigos.domain.article.enuns.ReviewPerArticleStatus;
+import com.topavnbanco.artigos.domain.article.projections.ArticleSummaryProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,6 +25,8 @@ public interface ArticleRepository {
 
     Article getReferenceById(Long id);
 
+    Page<Article> findByCongressoId(Long congressoId, Pageable pageable);
+
     List<Article> findByCongressoId(Long congressoId);
 
     Page<Article> findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(
@@ -31,6 +34,8 @@ public interface ArticleRepository {
             ReviewPerArticleStatus status,
             Pageable pageable
     );
+
+    Page<ArticleSummaryProjection> findByArticlesUsers_Id(Long userId, Pageable pageable);
 
     boolean existsByTitle(String title);
 

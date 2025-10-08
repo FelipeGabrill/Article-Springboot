@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 
 @Service
@@ -133,17 +134,14 @@ public class CongressoServiceImpl implements CongressoUseCases {
         entity.setDescription(dto.getDescription());
         entity.setDescriptionTitle(dto.getDescriptionTitle());
         entity.setCongressoModality(dto.getCongressoModality());
-        entity.setImageThumbnail(dto.getImageThumbnail());
+
+        byte[] thumb = decodeImageBase64(dto.getImageThumbnail());
+        if (thumb != null && thumb.length > 0) {
+            entity.setImageThumbnail(thumb);
+        }
+
         entity.setMinReviewsPerArticle(dto.getMinReviewsPerArticle());
         entity.setMaxReviewsPerArticle(dto.getMaxReviewsPerArticle());
-
-        if (dto.getUsersIds() != null) {
-            for (Long userId : dto.getUsersIds()) {
-                User user = userRepository.getReferenceById(userId);
-                user.setCongresso(entity);
-                entity.getUser().add(user);
-            }
-        }
 
         if (dto.getKnowledgeArea() != null) {
             for (String area : dto.getKnowledgeArea()) {
@@ -153,5 +151,16 @@ public class CongressoServiceImpl implements CongressoUseCases {
             }
         }
 
+    }
+
+    private static byte[] decodeImageBase64(String base64) {
+        if (base64 == null || base64.isBlank()) return null;
+        int comma = base64.indexOf(',');
+        String payload = (comma >= 0) ? base64.substring(comma + 1) : base64;
+        try {
+            return Base64.getDecoder().decode(payload);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Imagem do congresso inválida (Base64 incorreto).");
+        }
     }
 }

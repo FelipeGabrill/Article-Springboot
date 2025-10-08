@@ -1,12 +1,12 @@
 package com.topavnbanco.artigos.application.servicies;
 
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserInsertDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserSimpleDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserUpdateDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleUserDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.*;
 import com.topavnbanco.artigos.application.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.application.servicies.exceptions.ResourceNotFoundException;
 import com.topavnbanco.artigos.application.usecases.UserUseCases;
+import com.topavnbanco.artigos.domain.article.Article;
+import com.topavnbanco.artigos.domain.article.projections.ArticleSummaryProjection;
 import com.topavnbanco.artigos.domain.article.repository.ArticleRepository;
 import com.topavnbanco.artigos.domain.congresso.repository.CongressoRepository;
 import com.topavnbanco.artigos.domain.role.Role;
@@ -32,8 +32,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Base64;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserDetailsService, UserUseCases {
@@ -64,9 +64,29 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
     private AddressServiceImpl addressService;
 
     @Transactional(readOnly = true)
-    public UserDTO findById(Long id) {
+    public UserSimpleDTO findById(Long id) {
         User user = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
-        return new UserDTO(user);
+        return new UserSimpleDTO(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserArticleDTO findByIdWithArticles(Long id, Pageable pageable) {
+        User user = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
+
+        Page<ArticleSummaryProjection> articlesPage = articleRepository.findByArticlesUsers_Id(user.getId(), pageable);
+
+        List<ArticleUserDTO> articleDTOs = articlesPage.getContent().stream()
+                .map(a -> new ArticleUserDTO(a.getId(), a.getTitle(), a.getDescription(), a.getFormat()))
+                .toList();
+
+
+        return new UserArticleDTO(user, articleDTOs);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserSimpleDTO> findAllByCongressoId(Long congressoId, Pageable pageable) {
+        Page<User> result = repository.findAllByCongressoId(congressoId, pageable);
+        return result.map(x -> new UserSimpleDTO(x));
     }
 
     @Transactional(readOnly = true)
@@ -79,8 +99,8 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
     public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
         copyDtoToEntityInsert(dto, entity);
-        entity = repository.save(entity);
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity = repository.save(entity);
         //emailService.sendWelcomeEmail(entity.getLogin(), entity.getUsernameUser(), entity.getRoles());
         return new UserDTO(entity);
     }
@@ -119,8 +139,9 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
                         .orElseThrow(() -> new ResourceNotFoundException("Congresso não encontrado: " + dto.getCongressoId()))
         );
 
-        if (dto.getProfileImage() != null) {
-            entity.setProfileImage(dto.getProfileImage());
+        byte[] img = decodeImageBase64(dto.getProfileImage());
+        if (img != null && img.length > 0) {
+            entity.setProfileImage(img);
         }
 
         for (RoleDTO roleDto : dto.getRoles()) {
@@ -149,8 +170,9 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
 
 
         // dto.getProfileImage() como byte[]
-        if (dto.getProfileImage() != null) {
-            entity.setProfileImage(dto.getProfileImage());
+        byte[] img = decodeImageBase64(dto.getProfileImage());
+        if (img != null && img.length > 0) {
+            entity.setProfileImage(img);
         }
 //        // dto.getProfileImageBase64() como String Base64
 //        if (dto.getProfileImageBase64() != null && !dto.getProfileImageBase64().isBlank()) {
@@ -165,6 +187,19 @@ public class UserServiceImpl implements UserDetailsService, UserUseCases {
             }
         }
 
+    }
+
+    private static byte[] decodeImageBase64(String base64) {
+        if (base64 == null || base64.isBlank()) {
+            return null;
+        }
+        int comma = base64.indexOf(',');
+        String payload = (comma >= 0) ? base64.substring(comma + 1) : base64;
+        try {
+            return Base64.getDecoder().decode(payload);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Imagem de perfil em Base64 inválida.");
+        }
     }
 
     @Override

@@ -1,17 +1,16 @@
 package com.topavnbanco.artigos.application.usecases;
 
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserInsertDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserSimpleDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserUpdateDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserUseCases {
 
-    UserDTO findById(Long id);
+    UserSimpleDTO findById(Long id);
 
     Page<UserSimpleDTO> findAll(Pageable pageable);
+
+    Page<UserSimpleDTO> findAllByCongressoId(Long congressoId, Pageable pageable);
 
     UserDTO insert(UserInsertDTO dto);
 

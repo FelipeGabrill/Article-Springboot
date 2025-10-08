@@ -2,10 +2,7 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 import java.net.URI;
 
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserInsertDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserSimpleDTO;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserUpdateDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.user.*;
 import com.topavnbanco.artigos.application.servicies.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,8 +52,37 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
-        UserDTO dto = service.findById(id);
+    public ResponseEntity<UserSimpleDTO> findById(@PathVariable Long id) {
+        UserSimpleDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "Get User and article by User ID",
+            description = "Retrieve a user and article by their unique identifier",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "404", description = "Not Found")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
+    @GetMapping("/articles/{id}")
+    public ResponseEntity<UserArticleDTO> findByIdWithArticles(@PathVariable Long id, Pageable pageable) {
+        UserArticleDTO dto = service.findByIdWithArticles(id, pageable);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "List all Users by congressoId",
+            description = "Retrieve all users with pagination",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
+    @GetMapping("/congressoId/{congressoId}")
+    public ResponseEntity<Page<UserSimpleDTO>> findAllByCongressoId(@PathVariable Long congressoId, Pageable pageable) {
+        Page<UserSimpleDTO> dto = service.findAllByCongressoId(congressoId, pageable);
         return ResponseEntity.ok(dto);
     }
 
@@ -69,7 +95,7 @@ public class UserController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<UserSimpleDTO>> findByAll(Pageable pageable) {
+    public ResponseEntity<Page<UserSimpleDTO>> findAll(Pageable pageable) {
         Page<UserSimpleDTO> dto = service.findAll(pageable);
         return ResponseEntity.ok(dto);
     }

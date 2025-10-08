@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -46,7 +47,7 @@ public class UserSimpleDTO {
 
     @Schema(description = "Imagem de perfil do usuário em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
     @NotBlank(message = "A imagem de perfil é obrigatória.")
-    private byte[] profileImage;
+    private String profileImage;
 
     @Schema(description = "Identificador do congresso associado ao usuário", example = "1")
     @NotNull(message = "O congresso é obrigatório.")
@@ -66,7 +67,10 @@ public class UserSimpleDTO {
         this.addressId = entity.getAddress().getId();
         this.cardId = entity.getCard().getId();
         this.congressoId = entity.getCongresso().getId();
-        this.profileImage = entity.getProfileImage();
+
+        if (entity.getProfileImage() != null) {
+            this.profileImage = Base64.getEncoder().encodeToString(entity.getProfileImage());
+        }
 
         if (entity.getRoles() != null) {
             entity.getRoles().forEach(r -> this.roles.add(new RoleDTO(r)));

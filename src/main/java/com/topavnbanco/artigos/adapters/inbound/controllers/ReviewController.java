@@ -49,7 +49,7 @@ public class ReviewController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<ReviewDTO>> findByAll(ReviewQueryFilter reviewQueryFilter, Pageable pageable) {
+    public ResponseEntity<Page<ReviewDTO>> findAll(ReviewQueryFilter reviewQueryFilter, Pageable pageable) {
         Page<ReviewDTO> dto = service.findAll(reviewQueryFilter, pageable);
         return ResponseEntity.ok(dto);
     }

@@ -8,6 +8,7 @@ import com.topavnbanco.artigos.domain.article.enuns.ReviewPerArticleStatus;
 import com.topavnbanco.artigos.adapters.outbound.repositories.JpaArticleRepository;
 import com.topavnbanco.artigos.adapters.outbound.repositories.JpaCongressoRepository;
 import com.topavnbanco.artigos.application.servicies.EmailServiceImpl;
+import com.topavnbanco.artigos.domain.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class RankingNotificationServiceImpl {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private CongressoRepository congressoRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private EmailServiceImpl emailService;
@@ -69,9 +70,9 @@ public class RankingNotificationServiceImpl {
     }
 
     private Set<String> buildRecipients(Long congressoId, List<Article> top20) {
-        var congresso = congressoRepository.getReferenceById(congressoId);
+        var user = userRepository.findByCongressoId(congressoId);
 
-        Set<String> recipients = congresso.getUser().stream()
+        Set<String> recipients = user.stream()
                 .map(User::getLogin)
                 .filter(e -> e != null && !e.isBlank())
                 .collect(Collectors.toCollection(LinkedHashSet::new));

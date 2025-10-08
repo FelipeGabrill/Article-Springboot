@@ -35,7 +35,7 @@ public class JpaArticleEntity {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private String body;
+    private byte[] body;
 
     @Enumerated(EnumType.STRING)
     private ArticleFormat format;

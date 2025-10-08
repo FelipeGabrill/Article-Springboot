@@ -51,7 +51,4 @@ public class JpaCongressoEntity {
 
     private Integer minReviewsPerArticle;
 
-    @OneToMany(mappedBy = "congresso")
-    private List<JpaUserEntity> user = new ArrayList<>();
-
 }

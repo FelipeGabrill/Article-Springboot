@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class CongressoSimpleDTO {
     private String name;
 
     @Schema(description = "Imagem do congresso em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
-    private byte[] imageThumbnail;
+    private String imageThumbnail;
 
     @Schema(description = "Data de início do congresso", example = "2026-07-10")
     @NotNull(message = "A data de início é obrigatória.")
@@ -84,7 +85,9 @@ public class CongressoSimpleDTO {
         this.descriptionTitle = entity.getDescriptionTitle();
         this.submissionDeadline = entity.getSubmissionDeadline();
         this.reviewDeadline = entity.getReviewDeadline();
-        this.imageThumbnail = entity.getImageThumbnail();
+        if (entity.getImageThumbnail() != null && entity.getImageThumbnail().length > 0) {
+            this.imageThumbnail = Base64.getEncoder().encodeToString(entity.getImageThumbnail());
+        }
         this.maxReviewsPerArticle = entity.getMaxReviewsPerArticle();
         this.minReviewsPerArticle = entity.getMinReviewsPerArticle();
 

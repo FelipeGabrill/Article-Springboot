@@ -22,7 +22,7 @@ public class Article {
 
     private ReviewPerArticleStatus status;
 
-    private String body;
+    private byte[] body;
 
     private ArticleFormat format;
 
@@ -39,7 +39,7 @@ public class Article {
     public Article() {
     }
 
-    public Article(Long id, Set<String> knowledgeArea, String title, String description, ReviewPerArticleStatus status, Instant publishedAt, ArticleFormat format, String body, Set<User> articlesUsers, Evaluation evaluation, Congresso congresso, List<Review> reviews) {
+    public Article(Long id, Set<String> knowledgeArea, String title, String description, ReviewPerArticleStatus status, Instant publishedAt, ArticleFormat format, byte[] body, Set<User> articlesUsers, Evaluation evaluation, Congresso congresso, List<Review> reviews) {
         this.id = id;
         this.knowledgeArea = knowledgeArea;
         this.title = title;
@@ -102,11 +102,11 @@ public class Article {
         this.format = format;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(byte[] body) {
         this.body = body;
     }
 

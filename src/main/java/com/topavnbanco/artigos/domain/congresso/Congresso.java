@@ -1,7 +1,6 @@
 package com.topavnbanco.artigos.domain.congresso;
 
 import com.topavnbanco.artigos.domain.congresso.enuns.CongressoModality;
-import com.topavnbanco.artigos.domain.user.User;
 
 import java.util.*;
 
@@ -35,12 +34,10 @@ public class Congresso {
 
     private Integer minReviewsPerArticle;
 
-    private List<User> user = new ArrayList<>();
-
     public Congresso() {
     }
 
-    public Congresso(Long id, String name, byte[] imageThumbnail, Set<String> knowledgeArea, String description, CongressoModality congressoModality, String descriptionTitle, Date startDate, Date endDate, Date reviewDeadline, Integer maxReviewsPerArticle, String place, Date submissionDeadline, List<User> user, Integer minReviewsPerArticle) {
+    public Congresso(Long id, String name, byte[] imageThumbnail, Set<String> knowledgeArea, String description, CongressoModality congressoModality, String descriptionTitle, Date startDate, Date endDate, Date reviewDeadline, Integer maxReviewsPerArticle, String place, Date submissionDeadline, Integer minReviewsPerArticle) {
         this.id = id;
         this.name = name;
         this.imageThumbnail = imageThumbnail;
@@ -54,7 +51,6 @@ public class Congresso {
         this.maxReviewsPerArticle = maxReviewsPerArticle;
         this.place = place;
         this.submissionDeadline = submissionDeadline;
-        this.user = user;
         this.minReviewsPerArticle = minReviewsPerArticle;
     }
 
@@ -168,13 +164,5 @@ public class Congresso {
 
     public void setMinReviewsPerArticle(Integer minReviewsPerArticle) {
         this.minReviewsPerArticle = minReviewsPerArticle;
-    }
-
-    public List<User> getUser() {
-        return user;
-    }
-
-    public void setUser(List<User> user) {
-        this.user = user;
     }
 }

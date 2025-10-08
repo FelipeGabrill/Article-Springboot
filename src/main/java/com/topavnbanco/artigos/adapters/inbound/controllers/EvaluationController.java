@@ -47,7 +47,7 @@ public class EvaluationController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<EvaluationDTO>> findByAll(Pageable pageable) {
+    public ResponseEntity<Page<EvaluationDTO>> findAll(Pageable pageable) {
         Page<EvaluationDTO> dto = service.findAll(pageable);
         return ResponseEntity.ok(dto);
     }

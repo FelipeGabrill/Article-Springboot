@@ -31,7 +31,7 @@ public class ArticleDTO {
     @Schema(description = "Conteúdo completo do artigo", example = "Este artigo aborda os impactos da IA na saúde...")
     @NotBlank(message = "O corpo do artigo não pode estar em branco.")
     @Size(min = 20, message = "O corpo do artigo deve ter no mínimo 20 caracteres.")
-    private String body;
+    private byte[] body;
 
     @Schema(description = "Título do artigo", example = "Impactos da IA na saúde")
     @NotBlank(message = "O título do artigo não pode estar em branco.")

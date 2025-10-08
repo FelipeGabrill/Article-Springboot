@@ -20,7 +20,6 @@ public interface ArticleMapper {
     @Mapping(target = "articlesUsers.congresso", ignore = true)
     @Mapping(target = "evaluation.reviews", ignore = true)
     @Mapping(target = "evaluation.article", ignore = true)
-    @Mapping(target = "congresso.user", ignore = true)
     @Mapping(target = "congresso.knowledgeArea", ignore = true)
     Article toDomain(JpaArticleEntity entity);
 
@@ -34,7 +33,6 @@ public interface ArticleMapper {
     @Mapping(target = "articlesUsers.congresso", ignore = true)
     @Mapping(target = "evaluation.reviews", ignore = true)
     @Mapping(target = "evaluation.article", ignore = true)
-    @Mapping(target = "congresso.user", ignore = true)
     @Mapping(target = "congresso.knowledgeArea", ignore = true)
     JpaArticleEntity toEntity(Article domain);
 

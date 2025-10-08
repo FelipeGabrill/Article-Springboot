@@ -2,6 +2,7 @@ package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleDTO;
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleSimpleDTO;
 import com.topavnbanco.artigos.infrastructure.queryfilters.ArticleQueryFilter;
 import com.topavnbanco.artigos.application.servicies.ArticleServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,9 +39,24 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}")
-    public ResponseEntity<ArticleDTO> findById(@PathVariable Long id) {
-        ArticleDTO dto = service.findById(id);
+    public ResponseEntity<ArticleSimpleDTO> findById(@PathVariable Long id) {
+        ArticleSimpleDTO dto = service.findById(id);
         return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "Get Article with body by ID",
+            description = "Retrieve a article with body by its unique identifier",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK"),
+                    @ApiResponse(responseCode = "404", description = "Not Found")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
+    @GetMapping("/{id}/body")
+    public ResponseEntity<String> findArticleBodyById(@PathVariable Long id) {
+        String body = service.findArticleBodyById(id);
+        return ResponseEntity.ok(body);
     }
 
     @Operation(
@@ -52,8 +68,22 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping
-    public ResponseEntity<Page<ArticleDTO>> findByAll(ArticleQueryFilter articleQueryFilter, Pageable pageable) {
-        Page<ArticleDTO> dto = service.findAll(articleQueryFilter, pageable);
+    public ResponseEntity<Page<ArticleSimpleDTO>> findAll(ArticleQueryFilter articleQueryFilter, Pageable pageable) {
+        Page<ArticleSimpleDTO> dto = service.findAll(articleQueryFilter, pageable);
+        return ResponseEntity.ok(dto);
+    }
+
+    @Operation(
+            summary = "List all Article by congresso Id",
+            description = "Retrieve all article by congresso Id and pagination",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
+    @GetMapping("/congressoId/{congressoId}")
+    public ResponseEntity<Page<ArticleSimpleDTO>> findByCongressoId(@PathVariable Long congressoId, Pageable pageable) {
+        Page<ArticleSimpleDTO> dto = service.findByCongressoId(congressoId, pageable);
         return ResponseEntity.ok(dto);
     }
 
@@ -66,8 +96,8 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("top20/{congressoId}")
-    public ResponseEntity<Page<ArticleDTO>> findTop20(@PathVariable Long congressoId) {
-        Page<ArticleDTO> dto = service.findTop20(congressoId);
+    public ResponseEntity<Page<ArticleSimpleDTO>> findTop20(@PathVariable Long congressoId) {
+        Page<ArticleSimpleDTO> dto = service.findTop20(congressoId);
         return ResponseEntity.ok(dto);
     }
 
@@ -84,13 +114,13 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT')")
     @PostMapping
-    public ResponseEntity<ArticleDTO> insert(@Valid @RequestBody ArticleDTO dto) {
-        dto = service.insert(dto);
+    public ResponseEntity<ArticleSimpleDTO> insert(@Valid @RequestBody ArticleDTO dto) {
+        ArticleSimpleDTO simpleDto = service.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(dto.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(dto);
+        return ResponseEntity.created(uri).body(simpleDto);
     }
 
     @Operation(
@@ -107,9 +137,9 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT')")
     @PutMapping("/{id}")
-    public ResponseEntity<ArticleDTO> update(@PathVariable Long id, @Valid @RequestBody ArticleDTO dto) {
-        dto = service.update(id, dto);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<ArticleSimpleDTO> update(@PathVariable Long id, @Valid @RequestBody ArticleDTO dto) {
+        ArticleSimpleDTO simpleDto = service.update(id, dto);
+        return ResponseEntity.ok(simpleDto);
     }
 
     @Operation(

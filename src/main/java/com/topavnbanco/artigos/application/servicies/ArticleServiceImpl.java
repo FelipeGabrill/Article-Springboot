@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.application.servicies;
 
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleSimpleDTO;
 import com.topavnbanco.artigos.application.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.application.servicies.exceptions.ResourceNotFoundException;
 import com.topavnbanco.artigos.application.usecases.ArticleUseCases;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,31 +44,46 @@ public class ArticleServiceImpl implements ArticleUseCases {
     private CongressoRepository congressoRepository;
 
     @Transactional(readOnly = true)
-    public ArticleDTO findById(Long id) {
+    public ArticleSimpleDTO findById(Long id) {
         Article article = repository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Recurso não encontrado"));
-        return new ArticleDTO(article);
+        return new ArticleSimpleDTO(article);
     }
 
     @Transactional(readOnly = true)
-    public Page<ArticleDTO> findAll(ArticleQueryFilter filter, Pageable pageable) {
+    public String findArticleBodyById(Long id) {
+        byte[] bodyBytes = repository.findById(id)
+                .map(Article::getBody)
+                .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
+
+        return Base64.getEncoder().encodeToString(bodyBytes);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ArticleSimpleDTO> findByCongressoId(Long id, Pageable pageable) {
+        Page<Article> result = repository.findByCongressoId(id, pageable);
+        return result.map(ArticleSimpleDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ArticleSimpleDTO> findAll(ArticleQueryFilter filter, Pageable pageable) {
         Page<Article> result = repository.findAll(filter.toSpecification(), pageable);
-        return result.map(ArticleDTO::new);
+        return result.map(ArticleSimpleDTO::new);
     }
 
     @Transactional(readOnly = true)
-    public Page<ArticleDTO> findTop20(Long congressoId) {
+    public Page<ArticleSimpleDTO> findTop20(Long congressoId) {
         Pageable pageable = PageRequest.of(0, 20);
         Page<Article> top20 = repository.findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(
                 congressoId,
                 ReviewPerArticleStatus.VALID,
                 pageable
         );
-        return top20.map(ArticleDTO::new);
+        return top20.map(ArticleSimpleDTO::new);
     }
 
     @Transactional
-    public ArticleDTO insert(ArticleDTO dto) {
+    public ArticleSimpleDTO insert(ArticleDTO dto) {
         validTitle(dto.getTitle());
         Article entity = new Article();
         copyDtoToEntity(dto, entity);
@@ -74,11 +91,11 @@ public class ArticleServiceImpl implements ArticleUseCases {
         entity.setPublishedAt(Instant.now());
         entity.setStatus(ReviewPerArticleStatus.PENDING);
         entity = repository.save(entity);
-        return new ArticleDTO(entity);
+        return new ArticleSimpleDTO(entity);
     }
 
     @Transactional
-    public ArticleDTO update(Long id, ArticleDTO dto) {
+    public ArticleSimpleDTO update(Long id, ArticleDTO dto) {
         try {
             Article entity = repository.getReferenceById(id);
 
@@ -97,7 +114,7 @@ public class ArticleServiceImpl implements ArticleUseCases {
                 throw new DatabaseException("Já existe um artigo com esse título.");
             }
 
-            return new ArticleDTO(entity);
+            return new ArticleSimpleDTO(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Recurso não encontrado");
         }

@@ -35,6 +35,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public List<User> findByCongressoId(Long congressoId) {
+        return jpaUserRepository.findByCongressoId(congressoId).stream()
+                .map(userMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public boolean existsById(Long id) {
         return jpaUserRepository.existsById(id);
     }
@@ -45,6 +52,12 @@ public class UserRepositoryImpl implements UserRepository {
                 .stream()
                 .map(userMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<User> findAllByCongressoId(Long congressoId, Pageable pageable) {
+        return jpaUserRepository.findAllByCongressoId(congressoId, pageable)
+                .map(userMapper::toDomain);
     }
 
     @Override

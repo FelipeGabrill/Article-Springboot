@@ -2,8 +2,7 @@ package com.topavnbanco.artigos.adapters.inbound.dtos.congresso;
 
 import com.topavnbanco.artigos.domain.congresso.Congresso;
 import com.topavnbanco.artigos.domain.congresso.enuns.CongressoModality;
-import com.topavnbanco.artigos.adapters.inbound.dtos.user.UserDTO;
-import com.topavnbanco.artigos.domain.user.User;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -24,7 +23,7 @@ public class CongressoDTO {
     private String name;
 
     @Schema(description = "Imagem do congresso em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
-    private byte[] imageThumbnail;
+    private String imageThumbnail;
 
     @Schema(description = "Data de início do congresso", example = "2026-07-10")
     @NotNull(message = "A data de início é obrigatória.")
@@ -70,9 +69,6 @@ public class CongressoDTO {
     @NotNull(message = "A data limite de revisão é obrigatória.")
     private Date reviewDeadline;
 
-    @Schema(description = "IDs dos usuários associados ao congresso", example = "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]")
-    private List<Long> usersIds= new ArrayList<>();
-
     @Schema(description = "Áreas de conhecimento relacionadas ao congresso", example = "[\"Inteligência Artificial\", \"Ciência de Dados\", \"Engenharia de Software\"]")
     private Set<String> knowledgeArea = new LinkedHashSet<>();
 
@@ -87,14 +83,11 @@ public class CongressoDTO {
         this.descriptionTitle = entity.getDescriptionTitle();
         this.submissionDeadline = entity.getSubmissionDeadline();
         this.reviewDeadline = entity.getReviewDeadline();
-        this.imageThumbnail = entity.getImageThumbnail();
+        if (entity.getImageThumbnail() != null && entity.getImageThumbnail().length > 0) {
+            this.imageThumbnail = Base64.getEncoder().encodeToString(entity.getImageThumbnail());
+        }
         this.maxReviewsPerArticle = entity.getMaxReviewsPerArticle();
         this.minReviewsPerArticle = entity.getMinReviewsPerArticle();
-
-        for(User user : entity.getUser()) {
-            UserDTO dto = new UserDTO(user);
-            usersIds.add(dto.getId());
-        }
 
         if (entity.getKnowledgeArea() != null) {
             for (String area : entity.getKnowledgeArea()) {

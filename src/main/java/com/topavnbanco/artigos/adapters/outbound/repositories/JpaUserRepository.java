@@ -24,6 +24,10 @@ public interface JpaUserRepository extends JpaRepository<JpaUserEntity, Long> {
 			""")
     List<UserDetailsProjection> searchUserAndRolesByLogin(String login);
 
+    List<JpaUserEntity> findByCongressoId(Long congressoId);
+
+    Page<JpaUserEntity> findAllByCongressoId(Long congressoId, Pageable pageable);
+
     @EntityGraph(attributePaths = "userArticles")
     Optional<JpaUserEntity> findById(Long id);
 
@@ -61,7 +65,6 @@ public interface JpaUserRepository extends JpaRepository<JpaUserEntity, Long> {
             @Param("articleId") Long articleId,
             @Param("usedReviewerIds") Set<Long> usedReviewerIds
     );
-
 
     @Query("select u.id from JpaUserEntity u where u.id in :ids")
     Set<Long> findExistingIds(@Param("ids") Set<Long> ids);

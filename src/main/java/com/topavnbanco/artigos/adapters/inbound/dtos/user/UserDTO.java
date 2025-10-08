@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.UniqueElements;
 
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -58,7 +59,7 @@ public class UserDTO {
     private CardDTO cardDTO;
 
     @Schema(description = "Imagem de perfil do usuário em formato binário (base64)", example = "iVBORw0KGgoAAAANSUhEUgAA")
-    private byte[] profileImage;
+    private String profileImage;
 
     @Schema(description = "Identificador do congresso associado ao usuário", example = "1")
     @NotNull(message = "O congresso é obrigatório na criação.")
@@ -79,8 +80,11 @@ public class UserDTO {
         this.isReviewer = entity.getReviewer();
         this.addressDTO = (entity.getAddress() != null) ? new AddressDTO(entity.getAddress()) : null;
         this.cardDTO    = (entity.getCard()    != null) ? new CardDTO(entity.getCard())       : null;
-        this.profileImage = entity.getProfileImage();
         this.congressoId = (entity.getCongresso() != null ? entity.getCongresso().getId() : null);
+
+        if (entity.getProfileImage() != null) {
+            this.profileImage = Base64.getEncoder().encodeToString(entity.getProfileImage());
+        }
 
         if (entity.getRoles() != null) {
             entity.getRoles().forEach(r -> this.roles.add(new RoleDTO(r)));

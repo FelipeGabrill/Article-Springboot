@@ -1,12 +1,11 @@
 package com.topavnbanco.artigos.adapters.outbound.repositories.impl;
 
 import com.topavnbanco.artigos.adapters.outbound.entities.JpaArticleEntity;
-import com.topavnbanco.artigos.adapters.outbound.entities.JpaReviewEntity;
-import com.topavnbanco.artigos.adapters.outbound.entities.JpaUserEntity;
 import com.topavnbanco.artigos.adapters.outbound.repositories.JpaArticleRepository;
 import com.topavnbanco.artigos.adapters.outbound.repositories.JpaReviewRepository;
 import com.topavnbanco.artigos.domain.article.Article;
 import com.topavnbanco.artigos.domain.article.enuns.ReviewPerArticleStatus;
+import com.topavnbanco.artigos.domain.article.projections.ArticleSummaryProjection;
 import com.topavnbanco.artigos.domain.article.repository.ArticleRepository;
 import com.topavnbanco.artigos.infrastructure.mappers.ArticleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +62,11 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     }
 
     @Override
+    public Page<Article> findByCongressoId(Long congressoId, Pageable pageable) {
+        return jpaArticleRepository.findByCongressoId(congressoId, pageable).map(a -> articleMapper.toDomain(a));
+    }
+
+    @Override
     public List<Article> findByCongressoId(Long congressoId) {
         return articleMapper.toDomainList(jpaArticleRepository.findByCongressoId(congressoId));
     }
@@ -71,6 +75,11 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     public Page<Article> findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(Long congressoId, ReviewPerArticleStatus status, Pageable pageable) {
         return jpaArticleRepository.findByCongresso_IdAndStatusOrderByEvaluation_FinalScoreDesc(congressoId, status, pageable)
                 .map(articleMapper::toDomain);
+    }
+
+    @Override
+    public Page<ArticleSummaryProjection> findByArticlesUsers_Id(Long userId, Pageable pageable) {
+        return jpaArticleRepository.findByArticlesUsers_Id(userId, pageable);
     }
 
     @Override
