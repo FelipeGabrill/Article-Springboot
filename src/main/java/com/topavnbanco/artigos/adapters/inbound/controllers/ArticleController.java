@@ -1,6 +1,7 @@
 package com.topavnbanco.artigos.adapters.inbound.controllers;
 
 
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleBodyDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleSimpleDTO;
 import com.topavnbanco.artigos.application.usecases.ArticleUseCases;
@@ -55,8 +56,8 @@ public class ArticleController {
     )
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_PARTICIPANT', 'ROLE_REVIEWER')")
     @GetMapping("/{id}/body")
-    public ResponseEntity<String> findArticleBodyById(@PathVariable Long id) {
-        String body = service.findArticleBodyById(id);
+    public ResponseEntity<ArticleBodyDTO> findArticleBodyById(@PathVariable Long id) {
+        ArticleBodyDTO body = service.findArticleBodyById(id);
         return ResponseEntity.ok(body);
     }
 

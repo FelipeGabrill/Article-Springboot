@@ -31,7 +31,7 @@ public class ArticleDTO {
     @Schema(description = "Conteúdo completo do artigo", example = "Este artigo aborda os impactos da IA na saúde...")
     @NotBlank(message = "O corpo do artigo não pode estar em branco.")
     @Size(min = 20, message = "O corpo do artigo deve ter no mínimo 20 caracteres.")
-    private byte[] body;
+    private String body;
 
     @Schema(description = "Título do artigo", example = "Impactos da IA na saúde")
     @NotBlank(message = "O título do artigo não pode estar em branco.")
@@ -69,7 +69,9 @@ public class ArticleDTO {
         this.id = entity.getId();
         this.description = entity.getDescription();
         this.status = entity.getStatus();
-        this.body = entity.getBody();
+        if (entity.getBody() != null && entity.getBody().length > 0) {
+            this.body = Base64.getEncoder().encodeToString(entity.getBody());
+        }
         this.format = entity.getFormat();
         this.publishedAt = entity.getPublishedAt();
         this.title = entity.getTitle();

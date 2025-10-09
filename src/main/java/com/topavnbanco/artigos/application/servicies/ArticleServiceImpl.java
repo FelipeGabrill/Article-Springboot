@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.application.servicies;
 
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleBodyDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleSimpleDTO;
 import com.topavnbanco.artigos.application.servicies.exceptions.DatabaseException;
 import com.topavnbanco.artigos.application.servicies.exceptions.ResourceNotFoundException;
@@ -51,12 +52,17 @@ public class ArticleServiceImpl implements ArticleUseCases {
     }
 
     @Transactional(readOnly = true)
-    public String findArticleBodyById(Long id) {
+    public ArticleBodyDTO findArticleBodyById(Long id) {
         byte[] bodyBytes = repository.findById(id)
                 .map(Article::getBody)
                 .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
 
-        return Base64.getEncoder().encodeToString(bodyBytes);
+        if (bodyBytes == null || bodyBytes.length == 0) {
+            throw new ResourceNotFoundException("O artigo não possui conteúdo de PDF.");
+        }
+
+        String base64 = Base64.getEncoder().encodeToString(bodyBytes);
+        return new ArticleBodyDTO(base64);
     }
 
     @Transactional(readOnly = true)
@@ -143,7 +149,10 @@ public class ArticleServiceImpl implements ArticleUseCases {
 
         entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
-        entity.setBody(dto.getBody());
+        if (dto.getBody() != null && !dto.getBody().isBlank()) {
+            entity.setBody(decodePdfBase64(dto.getBody()));
+        }
+
         entity.setCongresso(congresso);
 
         if (dto.getArticlesUsersIds() == null || dto.getArticlesUsersIds().isEmpty()) {
@@ -168,6 +177,17 @@ public class ArticleServiceImpl implements ArticleUseCases {
                     entity.getKnowledgeArea().add(area.trim());
                 }
             }
+        }
+    }
+
+    private static byte[] decodePdfBase64(String base64) {
+        if (base64 == null || base64.isBlank()) return null;
+        int comma = base64.indexOf(',');
+        String payload = (comma >= 0) ? base64.substring(comma + 1) : base64;
+        try {
+            return Base64.getDecoder().decode(payload);
+        } catch (IllegalArgumentException e) {
+            throw new DatabaseException("O conteúdo do PDF está em formato inválido (não é Base64).");
         }
     }
 }

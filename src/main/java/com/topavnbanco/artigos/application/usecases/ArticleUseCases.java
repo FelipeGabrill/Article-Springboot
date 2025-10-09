@@ -1,5 +1,6 @@
 package com.topavnbanco.artigos.application.usecases;
 
+import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleBodyDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleDTO;
 import com.topavnbanco.artigos.adapters.inbound.dtos.article.ArticleSimpleDTO;
 import com.topavnbanco.artigos.infrastructure.queryfilters.ArticleQueryFilter;
@@ -20,5 +21,5 @@ public interface ArticleUseCases {
 
     void delete(Long id);
 
-    String findArticleBodyById(Long id);
+    ArticleBodyDTO findArticleBodyById(Long id);
 }
